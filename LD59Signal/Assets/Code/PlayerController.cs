@@ -1,0 +1,119 @@
+using UnityEngine;
+
+public class PlayerController : MonoBehaviour
+{
+    [SerializeField] private float walkSpeed = 5f;
+    [SerializeField] private float sprintSpeed = 10f;
+    [SerializeField] private float gravity = -19.62f;
+    [SerializeField] private float jumpHeight = 2f;
+    [SerializeField] private float maxSprintTime = 3f;
+    [SerializeField] private float sprintRecoveryRate = 1f;
+    [SerializeField] private float groundDistance = 0.4f;
+    [SerializeField] private LayerMask groundMask;
+    public float CurrentSpeed;
+
+    private CharacterController controller;
+    private Vector3 velocity;
+    private bool isGrounded;
+
+    private float currentSprintTime;
+    private bool isSprinting;
+
+    private void Start()
+    {
+        controller = GetComponent<CharacterController>();
+        currentSprintTime = maxSprintTime;
+    }
+
+    private void Update()
+    {
+        HandleGroundCheck();
+        HandleMovementInput();
+        HandleJumpInput();
+        ApplyGravity();
+
+        CurrentSpeed = isSprinting ? sprintSpeed : walkSpeed;
+    }
+
+    private void HandleGroundCheck()
+    {
+        isGrounded = Physics.Raycast(transform.position, Vector3.down, groundDistance, groundMask);
+
+        if (isGrounded && velocity.y < 0)
+        {
+            velocity.y = -2f;
+        }
+    }
+
+    private void HandleMovementInput()
+    {
+        float x = Input.GetAxisRaw("Horizontal");
+        float z = Input.GetAxisRaw("Vertical");
+
+        Vector3 move = transform.right * x + transform.forward * z;
+        move.Normalize();
+
+        HandleSprint();
+
+        float currentSpeed = isSprinting ? sprintSpeed : walkSpeed;
+        controller.Move(move * currentSpeed * Time.deltaTime);
+    }
+
+    private void HandleSprint()
+    {
+        bool isTryingToSprint = Input.GetKey(KeyCode.LeftShift) && Input.GetAxisRaw("Vertical") > 0;
+
+        if (isTryingToSprint)
+        {
+            if (currentSprintTime > 0)
+            {
+                isSprinting = true;
+                currentSprintTime -= Time.deltaTime;
+            }
+            else
+            {
+                isSprinting = false;
+            }
+        }
+        else
+        {
+            isSprinting = false;
+            if (currentSprintTime < maxSprintTime)
+            {
+                currentSprintTime += Time.deltaTime * sprintRecoveryRate;
+            }
+        }
+        
+        currentSprintTime = Mathf.Clamp(currentSprintTime, 0f, maxSprintTime);
+    }
+
+    private void HandleJumpInput()
+    {
+        if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
+        {
+            velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
+        }
+    }
+
+    private void ApplyGravity()
+    {
+        velocity.y += gravity * Time.deltaTime;
+        controller.Move(velocity * Time.deltaTime);
+    }
+
+    public float GetCurrentSprintTime()
+    {
+        return currentSprintTime;
+    }
+
+    public float GetMaxSprintTime()
+    {
+        return maxSprintTime;
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawLine(transform.position, transform.position + Vector3.down * groundDistance);
+    }
+}
