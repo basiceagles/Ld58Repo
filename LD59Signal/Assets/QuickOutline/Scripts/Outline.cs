@@ -1,4 +1,4 @@
-﻿//
+//
 //  Outline.cs
 //  QuickOutline
 //
@@ -108,7 +108,7 @@ public class Outline : MonoBehaviour {
       materials.Add(outlineMaskMaterial);
       materials.Add(outlineFillMaterial);
 
-      renderer.materials = materials.ToArray();
+      renderer.sharedMaterials = materials.ToArray();
     }
   }
 
@@ -146,7 +146,7 @@ public class Outline : MonoBehaviour {
       materials.Remove(outlineMaskMaterial);
       materials.Remove(outlineFillMaterial);
 
-      renderer.materials = materials.ToArray();
+      renderer.sharedMaterials = materials.ToArray();
     }
   }
 
