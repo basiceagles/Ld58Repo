@@ -17,10 +17,17 @@ public sealed class WeatherFader : MonoBehaviour
         [Min(0f)]
         public float environmentFogDensity;
         public Color mainCameraBackgroundColor;
+        public Color environmentAmbientColor;
+        public float directionalLightIntensity;
+        public float grassWindSpeed;
+        public float grassWindSize;
+        public float grassWindBending;
     }
 
     [Header("References")]
     [SerializeField] private Camera _mainCamera;
+    [SerializeField] private Light _directionalLight;
+    [SerializeField] private Terrain _terrain;
 
     [Header("Ambient Audio")]
     [SerializeField] private AudioSource _ambientAudioSource;
@@ -61,6 +68,24 @@ public sealed class WeatherFader : MonoBehaviour
         if (_mainCamera == null)
         {
             _mainCamera = Camera.main;
+        }
+
+        if (_directionalLight == null)
+        {
+            Light[] lights = FindObjectsByType<Light>(FindObjectsSortMode.None);
+            for (int i = 0; i < lights.Length; i++)
+            {
+                if (lights[i] != null && lights[i].type == LightType.Directional)
+                {
+                    _directionalLight = lights[i];
+                    break;
+                }
+            }
+        }
+
+        if (_terrain == null)
+        {
+            _terrain = Terrain.activeTerrain;
         }
 
         if (_ambientAudioSource != null)
@@ -185,6 +210,11 @@ public sealed class WeatherFader : MonoBehaviour
                 environmentFogColor = Color.Lerp(start.environmentFogColor, target.environmentFogColor, easedT),
                 environmentFogDensity = Mathf.Lerp(start.environmentFogDensity, target.environmentFogDensity, easedT),
                 mainCameraBackgroundColor = Color.Lerp(start.mainCameraBackgroundColor, target.mainCameraBackgroundColor, easedT),
+                environmentAmbientColor = Color.Lerp(start.environmentAmbientColor, target.environmentAmbientColor, easedT),
+                directionalLightIntensity = Mathf.Lerp(start.directionalLightIntensity, target.directionalLightIntensity, easedT),
+                grassWindSpeed = Mathf.Lerp(start.grassWindSpeed, target.grassWindSpeed, easedT),
+                grassWindSize = Mathf.Lerp(start.grassWindSize, target.grassWindSize, easedT),
+                grassWindBending = Mathf.Lerp(start.grassWindBending, target.grassWindBending, easedT),
             };
 
             Apply(lerped);
@@ -197,11 +227,18 @@ public sealed class WeatherFader : MonoBehaviour
 
     private WeatherPreset CaptureCurrent()
     {
+        TerrainData terrainData = _terrain != null ? _terrain.terrainData : null;
+
         return new WeatherPreset
         {
             environmentFogColor = RenderSettings.fogColor,
             environmentFogDensity = RenderSettings.fogDensity,
             mainCameraBackgroundColor = _mainCamera.backgroundColor,
+            environmentAmbientColor = RenderSettings.ambientLight,
+            directionalLightIntensity = _directionalLight != null ? _directionalLight.intensity : 0f,
+            grassWindSpeed = terrainData != null ? terrainData.wavingGrassSpeed : 0f,
+            grassWindSize = terrainData != null ? terrainData.wavingGrassAmount : 0f,
+            grassWindBending = terrainData != null ? terrainData.wavingGrassStrength : 0f,
         };
     }
 
@@ -210,6 +247,19 @@ public sealed class WeatherFader : MonoBehaviour
         RenderSettings.fogColor = preset.environmentFogColor;
         RenderSettings.fogDensity = preset.environmentFogDensity;
         _mainCamera.backgroundColor = preset.mainCameraBackgroundColor;
+        RenderSettings.ambientLight = preset.environmentAmbientColor;
+        if (_directionalLight != null)
+        {
+            _directionalLight.intensity = preset.directionalLightIntensity;
+        }
+
+        TerrainData terrainData = _terrain != null ? _terrain.terrainData : null;
+        if (terrainData != null)
+        {
+            terrainData.wavingGrassSpeed = preset.grassWindSpeed;
+            terrainData.wavingGrassAmount = preset.grassWindSize;
+            terrainData.wavingGrassStrength = preset.grassWindBending;
+        }
     }
 
     private IEnumerator LoopRoutine()
