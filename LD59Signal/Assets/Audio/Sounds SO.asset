@@ -102,3 +102,25 @@ MonoBehaviour:
     mixer: {fileID: -9115099129918078811, guid: b9c0b691b0266274d80bf447d282797d, type: 2}
     sounds:
     - {fileID: 8300000, guid: d5b886a35c8f9a2408baf3cbb90f13f0, type: 3}
+  - name: BUTTON
+    volume: 1
+    mixer: {fileID: 0}
+    sounds: []
+  - name: SIGNALSTICKPLACE
+    volume: 1
+    mixer: {fileID: -9115099129918078811, guid: b9c0b691b0266274d80bf447d282797d, type: 2}
+    sounds:
+    - {fileID: 8300000, guid: 612595152ba8d4347b7e2a803b3f349e, type: 3}
+    - {fileID: 8300000, guid: 54af2170e698bba4e9f8eed8e29d9a90, type: 3}
+  - name: SIGNALSTICKROTATE
+    volume: 1
+    mixer: {fileID: 0}
+    sounds: []
+  - name: LASERACTIVATE
+    volume: 1
+    mixer: {fileID: 0}
+    sounds: []
+  - name: IRONDETECTORBEEP
+    volume: 1
+    mixer: {fileID: 0}
+    sounds: []

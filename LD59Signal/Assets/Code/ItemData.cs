@@ -5,6 +5,7 @@ public class ItemData : MonoBehaviour
     public string itemName;
     public bool isPlaceable;
     public GameObject ghostPrefab;
+    public GameObject invalidGhostPrefab;
     public float placementYOffset;
     public AudioSource placementAudioSource;
 }

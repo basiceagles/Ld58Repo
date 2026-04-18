@@ -22,6 +22,14 @@ public sealed class WeatherFader : MonoBehaviour
     [Header("References")]
     [SerializeField] private Camera _mainCamera;
 
+    [Header("Ambient Audio")]
+    [SerializeField] private AudioSource _ambientAudioSource;
+    [SerializeField] private AudioSource _ambientAudioSourceSecondary;
+    [SerializeField] private AudioClip _basicAmbientClip;
+    [SerializeField] private AudioClip _foggyAmbientClip;
+    [Min(0f)]
+    [SerializeField] private float _audioFadeTimeSeconds = 1f;
+
     [Header("Weather Presets")]
     [SerializeField] private WeatherPreset _basicWeather;
     [SerializeField] private WeatherPreset _foggyWeather;
@@ -30,7 +38,18 @@ public sealed class WeatherFader : MonoBehaviour
     [Min(0f)]
     [SerializeField] private float _defaultFadeTimeSeconds = 1f;
 
+    [Header("Loop")]
+    [SerializeField] private bool _autoStartLoop = false;
+    [Min(0f)]
+    [SerializeField] private float _basicDurationSeconds = 10f;
+    [Min(0f)]
+    [SerializeField] private float _foggyDurationSeconds = 10f;
+
     private Coroutine _fadeRoutine;
+    private Coroutine _loopRoutine;
+    private float _ambientInitialVolume = 1f;
+    private AudioSource _activeAmbientSource;
+    private AudioSource _inactiveAmbientSource;
 
     private void Reset()
     {
@@ -42,6 +61,44 @@ public sealed class WeatherFader : MonoBehaviour
         if (_mainCamera == null)
         {
             _mainCamera = Camera.main;
+        }
+
+        if (_ambientAudioSource != null)
+        {
+            _ambientInitialVolume = _ambientAudioSource.volume;
+        }
+
+        EnsureAmbientSources();
+    }
+
+    private void Start()
+    {
+        Apply(_basicWeather);
+        StartAmbientImmediate(_basicAmbientClip);
+
+        if (_autoStartLoop)
+        {
+            StartLoop();
+        }
+    }
+
+    private void OnDisable()
+    {
+        StopLoop();
+    }
+
+    public void StartLoop()
+    {
+        StopLoop();
+        _loopRoutine = StartCoroutine(LoopRoutine());
+    }
+
+    public void StopLoop()
+    {
+        if (_loopRoutine != null)
+        {
+            StopCoroutine(_loopRoutine);
+            _loopRoutine = null;
         }
     }
 
@@ -153,5 +210,159 @@ public sealed class WeatherFader : MonoBehaviour
         RenderSettings.fogColor = preset.environmentFogColor;
         RenderSettings.fogDensity = preset.environmentFogDensity;
         _mainCamera.backgroundColor = preset.mainCameraBackgroundColor;
+    }
+
+    private IEnumerator LoopRoutine()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(_basicDurationSeconds);
+            FadeToFoggy();
+            yield return CrossfadeAmbient(_foggyAmbientClip, _audioFadeTimeSeconds);
+
+            yield return new WaitForSeconds(_foggyDurationSeconds);
+            FadeToBasic();
+            yield return CrossfadeAmbient(_basicAmbientClip, _audioFadeTimeSeconds);
+        }
+    }
+
+    private void StartAmbientImmediate(AudioClip clip)
+    {
+        EnsureAmbientSources();
+        if (_activeAmbientSource == null)
+        {
+            return;
+        }
+
+        if (clip == null)
+        {
+            _activeAmbientSource.Stop();
+            return;
+        }
+
+        _activeAmbientSource.clip = clip;
+        _activeAmbientSource.volume = _ambientInitialVolume;
+        _activeAmbientSource.loop = true;
+        _activeAmbientSource.Play();
+
+        if (_inactiveAmbientSource != null)
+        {
+            _inactiveAmbientSource.Stop();
+            _inactiveAmbientSource.clip = null;
+            _inactiveAmbientSource.volume = 0f;
+        }
+    }
+
+    private IEnumerator CrossfadeAmbient(AudioClip nextClip, float fadeTimeSeconds)
+    {
+        EnsureAmbientSources();
+        if (_activeAmbientSource == null)
+        {
+            yield break;
+        }
+
+        if (_inactiveAmbientSource == null)
+        {
+            StartAmbientImmediate(nextClip);
+            yield break;
+        }
+
+        if (nextClip == null)
+        {
+            float tStop = 0f;
+            float startStopVolume = _activeAmbientSource.volume;
+            if (fadeTimeSeconds <= 0f)
+            {
+                _activeAmbientSource.Stop();
+                _activeAmbientSource.clip = null;
+                _activeAmbientSource.volume = _ambientInitialVolume;
+                yield break;
+            }
+
+            while (tStop < 1f)
+            {
+                tStop += Time.deltaTime / fadeTimeSeconds;
+                _activeAmbientSource.volume = Mathf.Lerp(startStopVolume, 0f, Mathf.Clamp01(tStop));
+                yield return null;
+            }
+
+            _activeAmbientSource.volume = 0f;
+            _activeAmbientSource.Stop();
+            _activeAmbientSource.clip = null;
+            _activeAmbientSource.volume = _ambientInitialVolume;
+            yield break;
+        }
+
+        _inactiveAmbientSource.Stop();
+        _inactiveAmbientSource.clip = nextClip;
+        _inactiveAmbientSource.loop = true;
+        _inactiveAmbientSource.volume = 0f;
+        _inactiveAmbientSource.Play();
+
+        if (fadeTimeSeconds <= 0f)
+        {
+            _activeAmbientSource.Stop();
+            _activeAmbientSource.volume = 0f;
+            _inactiveAmbientSource.volume = _ambientInitialVolume;
+            SwapAmbientSources();
+            yield break;
+        }
+
+        float t = 0f;
+        float fromStartVolume = _activeAmbientSource.volume;
+        while (t < 1f)
+        {
+            t += Time.deltaTime / fadeTimeSeconds;
+            float k = Mathf.Clamp01(t);
+            _activeAmbientSource.volume = Mathf.Lerp(fromStartVolume, 0f, k);
+            _inactiveAmbientSource.volume = Mathf.Lerp(0f, _ambientInitialVolume, k);
+            yield return null;
+        }
+
+        _activeAmbientSource.volume = 0f;
+        _activeAmbientSource.Stop();
+        _inactiveAmbientSource.volume = _ambientInitialVolume;
+        SwapAmbientSources();
+    }
+
+    private void EnsureAmbientSources()
+    {
+        if (_ambientAudioSource != null && _ambientAudioSourceSecondary == null)
+        {
+            _ambientAudioSourceSecondary = gameObject.AddComponent<AudioSource>();
+            _ambientAudioSourceSecondary.playOnAwake = false;
+            _ambientAudioSourceSecondary.loop = true;
+            _ambientAudioSourceSecondary.spatialBlend = _ambientAudioSource.spatialBlend;
+            _ambientAudioSourceSecondary.outputAudioMixerGroup = _ambientAudioSource.outputAudioMixerGroup;
+            _ambientAudioSourceSecondary.rolloffMode = _ambientAudioSource.rolloffMode;
+            _ambientAudioSourceSecondary.minDistance = _ambientAudioSource.minDistance;
+            _ambientAudioSourceSecondary.maxDistance = _ambientAudioSource.maxDistance;
+            _ambientAudioSourceSecondary.dopplerLevel = _ambientAudioSource.dopplerLevel;
+            _ambientAudioSourceSecondary.spread = _ambientAudioSource.spread;
+            _ambientAudioSourceSecondary.priority = _ambientAudioSource.priority;
+            _ambientAudioSourceSecondary.panStereo = _ambientAudioSource.panStereo;
+            _ambientAudioSourceSecondary.reverbZoneMix = _ambientAudioSource.reverbZoneMix;
+            _ambientAudioSourceSecondary.pitch = _ambientAudioSource.pitch;
+            _ambientAudioSourceSecondary.mute = _ambientAudioSource.mute;
+            _ambientAudioSourceSecondary.bypassEffects = _ambientAudioSource.bypassEffects;
+            _ambientAudioSourceSecondary.bypassListenerEffects = _ambientAudioSource.bypassListenerEffects;
+            _ambientAudioSourceSecondary.bypassReverbZones = _ambientAudioSource.bypassReverbZones;
+            _ambientAudioSourceSecondary.ignoreListenerPause = _ambientAudioSource.ignoreListenerPause;
+            _ambientAudioSourceSecondary.ignoreListenerVolume = _ambientAudioSource.ignoreListenerVolume;
+            _ambientAudioSourceSecondary.volume = 0f;
+        }
+
+        if (_activeAmbientSource == null)
+        {
+            _activeAmbientSource = _ambientAudioSource;
+            _inactiveAmbientSource = _ambientAudioSourceSecondary;
+        }
+    }
+
+    private void SwapAmbientSources()
+    {
+        AudioSource temp = _activeAmbientSource;
+        _activeAmbientSource = _inactiveAmbientSource;
+        _inactiveAmbientSource = temp;
     }
 }

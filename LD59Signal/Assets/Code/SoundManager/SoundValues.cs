@@ -17,6 +17,11 @@ namespace SmallHedge.SoundManager
         EARTHQUAKE,
         PERKSELECTCLICK,
         UIDENIED,
-        UICONFIRM
+        UICONFIRM,
+        BUTTON,
+        SIGNALSTICKPLACE,
+        SIGNALSTICKROTATE,
+        LASERACTIVATE,
+        IRONDETECTORBEEP
     }
 }
