@@ -8,6 +8,7 @@ public class ItemData : MonoBehaviour
     public GameObject invalidGhostPrefab;
     public float placementYOffset;
     public AudioSource placementAudioSource;
+    public Sprite icon;
 
     public Animator itemAnimator;
     public bool isPlaced = false; 
