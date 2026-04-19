@@ -1,3 +1,4 @@
+using SmallHedge.SoundManager;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -12,9 +13,18 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private LayerMask groundMask;
     public float CurrentSpeed;
 
+    [Header("Footsteps")]
+    [Min(0f)]
+    [SerializeField] private float walkFootstepInterval = 0.5f;
+    [Min(0f)]
+    [SerializeField] private float runFootstepInterval = 0.25f;
+
     private CharacterController controller;
     private Vector3 velocity;
     private bool isGrounded;
+
+    private float footstepTimer;
+    private bool isMoving;
 
     private float currentSprintTime;
     private bool isSprinting;
@@ -32,12 +42,16 @@ public class PlayerController : MonoBehaviour
         HandleJumpInput();
         ApplyGravity();
 
+        HandleFootsteps();
+
         CurrentSpeed = isSprinting ? sprintSpeed : walkSpeed;
     }
 
     private void HandleGroundCheck()
     {
-        isGrounded = Physics.Raycast(transform.position, Vector3.down, groundDistance, groundMask);
+        bool controllerGrounded = controller.isGrounded;
+        bool sphereGrounded = Physics.SphereCast(transform.position, controller.radius * 0.5f, Vector3.down, out _, groundDistance, groundMask);
+        isGrounded = controllerGrounded || sphereGrounded;
 
         if (isGrounded && velocity.y < 0)
         {
@@ -53,10 +67,34 @@ public class PlayerController : MonoBehaviour
         Vector3 move = transform.right * x + transform.forward * z;
         move.Normalize();
 
+        isMoving = move.sqrMagnitude > 0.001f;
+
         HandleSprint();
 
         float currentSpeed = isSprinting ? sprintSpeed : walkSpeed;
         controller.Move(move * currentSpeed * Time.deltaTime);
+    }
+
+    private void HandleFootsteps()
+    {
+        if (!isGrounded || !isMoving)
+        {
+            footstepTimer = 0f;
+            return;
+        }
+
+        float interval = isSprinting ? runFootstepInterval : walkFootstepInterval;
+        if (interval <= 0f)
+        {
+            return;
+        }
+
+        footstepTimer -= Time.deltaTime;
+        if (footstepTimer <= 0f)
+        {
+            SoundManager.PlaySound(SoundType.FOOTSTEP);
+            footstepTimer = interval;
+        }
     }
 
     private void HandleSprint()

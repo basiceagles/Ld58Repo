@@ -43,12 +43,13 @@ MonoBehaviour:
     - {fileID: 8300000, guid: db27f5d442c3bfc4c8db1a8a82e3040f, type: 3}
   - name: FOOTSTEP
     volume: 0.8
-    mixer: {fileID: -9115099129918078811, guid: a60d6f2e7ea418a4bbf5dc0b96aacfde, type: 2}
+    mixer: {fileID: -9115099129918078811, guid: b9c0b691b0266274d80bf447d282797d, type: 2}
     sounds:
-    - {fileID: 8300000, guid: 562cc6ee3f3b18d4e8bec63dbb1ff6c8, type: 3}
-    - {fileID: 8300000, guid: 0ca4c04b1ca953d4db01672d26d6f8bd, type: 3}
-    - {fileID: 8300000, guid: b7f27e6455f740443b9844ae4ce6fb93, type: 3}
-    - {fileID: 8300000, guid: 45ccee062e383764a90dc874b2efc7ef, type: 3}
+    - {fileID: 8300000, guid: 95c7073635bdd7c4989ea4fc9f4056df, type: 3}
+    - {fileID: 8300000, guid: 36bb5280448dc494aa4e5cce5cda3c3c, type: 3}
+    - {fileID: 8300000, guid: 40c434f265c31784989201ac2368c9e5, type: 3}
+    - {fileID: 8300000, guid: 57125b2741978cb498e51b159bae1ba0, type: 3}
+    - {fileID: 8300000, guid: 6d73c6cfbe40d874ba4e93cc8c2e22c4, type: 3}
   - name: LEVER
     volume: 1
     mixer: {fileID: -9115099129918078811, guid: a60d6f2e7ea418a4bbf5dc0b96aacfde, type: 2}
