@@ -17,7 +17,6 @@ public class CameraController : MonoBehaviour
 
     private void Update()
     {
-        // Для мыши НЕЛЬЗЯ использовать Time.deltaTime, из-за этого во время микролагов чувствительность взлетала в небеса
         float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity;
         float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity;
 

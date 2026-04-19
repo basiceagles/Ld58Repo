@@ -8,4 +8,33 @@ public class ItemData : MonoBehaviour
     public GameObject invalidGhostPrefab;
     public float placementYOffset;
     public AudioSource placementAudioSource;
+
+    public Animator itemAnimator;
+    public bool isPlaced = false; 
+    public bool isActivated = false;
+
+    private void Start()
+    {
+        StopAnimation();
+    }
+
+    public void StopAnimation()
+    {
+        if (itemAnimator != null)
+        {
+            itemAnimator.enabled = false;
+            itemAnimator.Rebind();
+            itemAnimator.Update(0f);
+        }
+    }
+
+    public void ToggleActivation()
+    {
+        if (itemAnimator == null)
+        {
+            return;
+        }
+        isActivated = !isActivated;
+        itemAnimator.enabled = isActivated;
+    }
 }
