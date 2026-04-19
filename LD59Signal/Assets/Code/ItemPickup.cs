@@ -75,7 +75,7 @@ public class ItemPickup : MonoBehaviour
         if (Physics.Raycast(cam.position, cam.forward, out RaycastHit hit, pickupRange, interactableLayer))
         {
             AntennaController antenna = hit.collider.GetComponentInParent<AntennaController>();
-            if (antenna != null && hit.collider.gameObject == antenna.dishPart)
+            if (antenna != null && IsPartOf(hit.collider.gameObject, antenna.dishPart))
             {
                 return true;
             }
@@ -88,7 +88,14 @@ public class ItemPickup : MonoBehaviour
         if (Physics.Raycast(cam.position, cam.forward, out RaycastHit hit, pickupRange, interactableLayer))
         {
             AntennaController antenna = hit.collider.GetComponentInParent<AntennaController>();
-            if (antenna != null && hit.collider.gameObject == antenna.dishPart)
+            bool isDishPart = antenna != null && IsPartOf(hit.collider.gameObject, antenna.dishPart);
+            
+            if (Input.GetKey(KeyCode.Q) || Input.GetKey(KeyCode.E))
+            {
+                Debug.Log($"HandleDishRotation: hit={hit.collider.name}, antenna={(antenna?.name ?? "null")}, dishPart={(antenna?.dishPart?.name ?? "null")}, isDishPart={isDishPart}");
+            }
+            
+            if (isDishPart)
             {
                 float dir = 0;
                 if (Input.GetKey(KeyCode.Q)) dir = -1;
@@ -96,10 +103,17 @@ public class ItemPickup : MonoBehaviour
                 
                 if (dir != 0)
                 {
+                    Debug.Log($"HandleDishRotation: Calling RotateDishManual with dir={dir}");
                     antenna.RotateDishManual(dir);
                 }
             }
         }
+    }
+
+    private bool IsPartOf(GameObject hit, GameObject part)
+    {
+        if (part == null) return false;
+        return hit == part || hit.transform.IsChildOf(part.transform);
     }
 
     private void HandleHighlightAndPickup()
@@ -137,11 +151,11 @@ public class ItemPickup : MonoBehaviour
                     UpdateOutline(hit.collider.gameObject);
                     AntennaController antenna = data.GetComponentInChildren<AntennaController>();
                     
-                    if (antenna != null && hit.collider.gameObject == antenna.dishPart && !antenna.IsSignalConfirmed)
+                    if (antenna != null && IsPartOf(hit.collider.gameObject, antenna.dishPart) && !antenna.IsSignalConfirmed)
                     {
                         if (promptText != null) promptText.text = "Q/E - Крутить";
                     }
-                    else if (antenna != null && hit.collider.gameObject == antenna.dishPart && antenna.IsSignalConfirmed)
+                    else if (antenna != null && IsPartOf(hit.collider.gameObject, antenna.dishPart) && antenna.IsSignalConfirmed)
                     {
                         // Hide prompt or show something else when signal is fixed
                         if (interactionPrompt != null) interactionPrompt.SetActive(false);

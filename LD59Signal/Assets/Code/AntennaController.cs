@@ -8,14 +8,28 @@ public class AntennaController : MonoBehaviour
     public GameObject buttonPart;
     public GameObject monitorPart;
     public Camera antennaCamera;
-    [SerializeField] private float rotSpeed = 30f;
-    [SerializeField] private float rotLimit = 45f;
+    
+    [Header("Antenna Parts Rotation")]
+    public Transform yawPart;
+    public Transform pitchPart;
+    
+    [SerializeField] private float yawSpeed = 30f;
+    [SerializeField] private float yawLimit = 45f;
+    
+    [SerializeField] private float pitchSpeed = 30f;
+    [SerializeField] private float pitchLimit = 45f;
 
     public GameObject dishPart;
     public Transform linePoint;
     public Transform lineTarget;
     public LineRenderer lineRenderer;
     public LayerMask signalLayer;
+    
+    [Header("Laser Beam")]
+    public Material laserMaterial;
+    public Color laserColor = Color.green;
+    public float laserWidth = 0.05f;
+    public Light laserPointLight;
 
     private bool isPowered;
     private bool isViewing;
@@ -25,7 +39,8 @@ public class AntennaController : MonoBehaviour
     private Camera mainCam;
     private float pan;
     private float tilt;
-    private Quaternion startRot;
+    private Quaternion startRotYaw;
+    private Quaternion startRotPitch;
     private AntennaController targetAntenna;
     private ItemData itemData;
 
@@ -33,7 +48,6 @@ public class AntennaController : MonoBehaviour
     {
         if (antennaCamera != null)
         {
-            startRot = antennaCamera.transform.localRotation;
             antennaCamera.enabled = false;
 
             AudioListener al = antennaCamera.GetComponent<AudioListener>();
@@ -42,10 +56,25 @@ public class AntennaController : MonoBehaviour
                 al.enabled = false;
             }
         }
+        
+        if (yawPart != null)
+        {
+            startRotYaw = yawPart.localRotation;
+        }
+        
+        if (pitchPart != null)
+        {
+            startRotPitch = pitchPart.localRotation;
+        }
 
         if (lineRenderer != null)
         {
             lineRenderer.enabled = false;
+        }
+        
+        if (laserPointLight != null)
+        {
+            laserPointLight.enabled = false;
         }
 
         itemData = GetComponentInParent<ItemData>();
@@ -107,8 +136,8 @@ public class AntennaController : MonoBehaviour
 
         isViewing = true;
         skipE = true;
-        pan = 0;
-        tilt = 0;
+        
+        SyncPanTiltFromCurrentRotation();
 
         mainCam = Camera.main;
         if (mainCam)
@@ -132,6 +161,7 @@ public class AntennaController : MonoBehaviour
 
     private void ExitView()
     {
+        SaveCurrentRotation();
         isViewing = false;
 
         if (antennaCamera != null)
@@ -181,12 +211,20 @@ public class AntennaController : MonoBehaviour
             TrySignal();
         }
 
-        pan = Mathf.Clamp(pan + Input.GetAxis("Horizontal") * rotSpeed * Time.deltaTime, -rotLimit, rotLimit);
-        tilt = Mathf.Clamp(tilt - Input.GetAxis("Vertical") * rotSpeed * Time.deltaTime, -rotLimit, rotLimit);
+        float horizontal = Input.GetAxis("Horizontal");
+        float vertical = Input.GetAxis("Vertical");
+        
+        pan = Mathf.Clamp(pan + horizontal * yawSpeed * Time.deltaTime, -yawLimit, yawLimit);
+        tilt = Mathf.Clamp(tilt + vertical * pitchSpeed * Time.deltaTime, -pitchLimit, pitchLimit);
 
-        if (antennaCamera)
+        if (yawPart != null)
         {
-            antennaCamera.transform.localRotation = startRot * Quaternion.Euler(tilt, pan, 0);
+            yawPart.localRotation = startRotYaw * Quaternion.Euler(0, 0, pan);
+        }
+        
+        if (pitchPart != null)
+        {
+            pitchPart.localRotation = startRotPitch * Quaternion.Euler(tilt, 0, 0);
         }
 
         if (lineRenderer && lineRenderer.enabled && targetAntenna != null && targetAntenna.lineTarget != null)
@@ -199,12 +237,16 @@ public class AntennaController : MonoBehaviour
     {
         if (antennaCamera == null)
         {
+            Debug.LogWarning("TrySignal: antennaCamera is null");
             return;
         }
 
         Ray ray = new Ray(antennaCamera.transform.position, antennaCamera.transform.forward);
+        Debug.DrawRay(ray.origin, ray.direction * 100f, Color.red, 2f);
+        
         if (Physics.Raycast(ray, out RaycastHit hit, 500f, signalLayer))
         {
+            Debug.Log($"TrySignal hit: {hit.collider.name} on layer {hit.collider.gameObject.layer}");
             AntennaController other = hit.collider.GetComponentInParent<AntennaController>();
             if (other != null && other != this && IsPartOf(hit.collider.gameObject, other.dishPart))
             {
@@ -212,11 +254,17 @@ public class AntennaController : MonoBehaviour
                 targetAntenna = other;
                 Debug.Log("сигнал установлен");
 
-                lineRenderer.enabled = true;
-                lineRenderer.startWidth = 0.03f;
-                lineRenderer.endWidth = 0.03f;
+                SetupLaserBeam();
                 DrawSignalLine(linePoint.position, other.lineTarget.position);
             }
+            else
+            {
+                Debug.Log($"TrySignal rejected: other={(other?.name ?? "null")}, isSelf={other == this}, isDishPart={IsPartOf(hit.collider.gameObject, other?.dishPart)}");
+            }
+        }
+        else
+        {
+            Debug.Log("TrySignal: no hit on signalLayer");
         }
     }
 
@@ -225,15 +273,74 @@ public class AntennaController : MonoBehaviour
         lineRenderer.positionCount = 2;
         lineRenderer.SetPosition(0, from);
         lineRenderer.SetPosition(1, to);
+        
+        if (laserPointLight != null)
+        {
+            laserPointLight.transform.position = to;
+        }
+    }
+
+    private void SetupLaserBeam()
+    {
+        if (lineRenderer == null) return;
+        
+        lineRenderer.enabled = true;
+        lineRenderer.startWidth = laserWidth;
+        lineRenderer.endWidth = laserWidth;
+        
+        if (laserMaterial != null)
+        {
+            lineRenderer.material = laserMaterial;
+        }
+        
+        lineRenderer.startColor = laserColor;
+        lineRenderer.endColor = laserColor;
+        
+        if (laserPointLight != null)
+        {
+            laserPointLight.enabled = true;
+            laserPointLight.color = laserColor;
+        }
     }
 
     public void RotateDishManual(float input)
     {
         if (signalConfirmed) return;
 
-        if (dishPart)
+        pan = Mathf.Clamp(pan + input * yawSpeed * Time.deltaTime, -yawLimit, yawLimit);
+        
+        if (yawPart != null)
         {
-            dishPart.transform.Rotate(Vector3.up, input * rotSpeed * Time.deltaTime, Space.World);
+            yawPart.localRotation = startRotYaw * Quaternion.Euler(0, 0, pan);
+            Debug.Log($"RotateDishManual: yawPart={yawPart.name}, pan={pan:F2}");
         }
+        else
+        {
+            Debug.LogWarning("RotateDishManual: yawPart is null!");
+        }
+    }
+
+    private void SyncPanTiltFromCurrentRotation()
+    {
+        if (yawPart != null)
+        {
+            Quaternion yawOffset = Quaternion.Inverse(startRotYaw) * yawPart.localRotation;
+            pan = yawOffset.eulerAngles.z;
+            if (pan > 180f) pan -= 360f;
+        }
+        
+        if (pitchPart != null)
+        {
+            Quaternion pitchOffset = Quaternion.Inverse(startRotPitch) * pitchPart.localRotation;
+            tilt = pitchOffset.eulerAngles.x;
+            if (tilt > 180f) tilt -= 360f;
+        }
+    }
+
+    private void SaveCurrentRotation()
+    {
+        // pan and tilt are already stored, just clamp them
+        pan = Mathf.Clamp(pan, -yawLimit, yawLimit);
+        tilt = Mathf.Clamp(tilt, -pitchLimit, pitchLimit);
     }
 }
