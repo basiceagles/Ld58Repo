@@ -21,6 +21,7 @@ public class AntennaController : MonoBehaviour
     private bool isViewing;
     private bool skipE;
     private bool signalConfirmed;
+    public bool IsSignalConfirmed => signalConfirmed;
     private Camera mainCam;
     private float pan;
     private float tilt;
@@ -228,6 +229,8 @@ public class AntennaController : MonoBehaviour
 
     public void RotateDishManual(float input)
     {
+        if (signalConfirmed) return;
+
         if (dishPart)
         {
             dishPart.transform.Rotate(Vector3.up, input * rotSpeed * Time.deltaTime, Space.World);

@@ -137,9 +137,14 @@ public class ItemPickup : MonoBehaviour
                     UpdateOutline(hit.collider.gameObject);
                     AntennaController antenna = data.GetComponentInChildren<AntennaController>();
                     
-                    if (antenna != null && hit.collider.gameObject == antenna.dishPart)
+                    if (antenna != null && hit.collider.gameObject == antenna.dishPart && !antenna.IsSignalConfirmed)
                     {
                         if (promptText != null) promptText.text = "Q/E - Крутить";
+                    }
+                    else if (antenna != null && hit.collider.gameObject == antenna.dishPart && antenna.IsSignalConfirmed)
+                    {
+                        // Hide prompt or show something else when signal is fixed
+                        if (interactionPrompt != null) interactionPrompt.SetActive(false);
                     }
                     else
                     {
