@@ -48,14 +48,10 @@ public class DecipherTerminal : MonoBehaviour
         _interactPrompt.SetActive(inRange && !allDone);
 
     if (inRange && !allDone)
-    {
-        // Показываем дистанцию до терминала каждые ~секунду через лог
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            Debug.Log($"[DecipherTerminal] E нажата, inRange={inRange}, allDone={allDone}, фрагментов={FragmentsDeciphered}/{TotalFragments}");
-            TryEnter();
-        }
-    }
+{
+    if (Input.GetKeyDown(KeyCode.I))
+        TryEnter();
+}
 }
 
    public void TryEnter()
