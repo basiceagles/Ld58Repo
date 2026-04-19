@@ -7,106 +7,117 @@ public class AntennaController : MonoBehaviour
     public AudioSource humSource;
     public GameObject buttonPart;
     public GameObject monitorPart;
-    public Camera[] antennaCameras;
-    public float rotSpeed = 30f;
-    public float rotLimit = 45f;
+    public Camera antennaCamera;
+    [SerializeField] private float rotSpeed = 30f;
+    [SerializeField] private float rotLimit = 45f;
 
-    private bool isPowered, isViewing, skipE;
-    private int camIndex;
+    public GameObject dishPart;
+    public Transform linePoint;
+    public Transform lineTarget;
+    public LineRenderer lineRenderer;
+    public LayerMask signalLayer;
+
+    private bool isPowered;
+    private bool isViewing;
+    private bool skipE;
+    private bool signalConfirmed;
     private Camera mainCam;
-    private float pan, tilt;
-    private Quaternion[] startRot;
+    private float pan;
+    private float tilt;
+    private Quaternion startRot;
+    private AntennaController targetAntenna;
 
     private void Start()
     {
-        startRot = new Quaternion[antennaCameras.Length];
-        for (int i = 0; i < antennaCameras.Length; i++)
+        if (antennaCamera != null)
         {
-            if (antennaCameras[i] == null) 
-            {
-                continue;
-            }
-            startRot[i] = antennaCameras[i].transform.localRotation;
-            antennaCameras[i].enabled = false;
-            var al = antennaCameras[i].GetComponent<AudioListener>();
+            startRot = antennaCamera.transform.localRotation;
+            antennaCamera.enabled = false;
+
+            AudioListener al = antennaCamera.GetComponent<AudioListener>();
             if (al)
             {
                 al.enabled = false;
             }
         }
+
+        if (lineRenderer != null)
+        {
+            lineRenderer.enabled = false;
+        }
     }
 
     public void OnInteract(GameObject hit)
     {
-        if (Match(hit, buttonPart) && !isPowered) 
+        if (IsPartOf(hit, buttonPart) && !isPowered)
         {
-            PowerOn();
+            isPowered = true;
+            if (humSource)
+            {
+                humSource.Play();
+            }
+            if (baseRenderer && baseRenderer.materials.Length > 1)
+            {
+                Material[] mats = baseRenderer.materials;
+                mats[1] = bulbOnMaterial;
+                baseRenderer.materials = mats;
+            }
         }
-        else if (Match(hit, monitorPart) && isPowered && !isViewing) 
+        else if (IsPartOf(hit, monitorPart) && isPowered && !isViewing)
         {
             EnterView();
         }
     }
 
-    private bool Match(GameObject hit, GameObject part)
+    private bool IsPartOf(GameObject hit, GameObject part)
     {
-        return part != null && (hit == part || hit.transform.IsChildOf(part.transform));
-    }
-
-    private void PowerOn()
-    {
-        isPowered = true;
-        if (humSource) 
+        if (part == null)
         {
-            humSource.Play();
+            return false;
         }
-        if (baseRenderer && baseRenderer.materials.Length > 1)
-        {
-            var mats = baseRenderer.materials;
-            mats[1] = bulbOnMaterial;
-            baseRenderer.materials = mats;
-        }
+        return hit == part || hit.transform.IsChildOf(part.transform);
     }
 
     private void EnterView()
     {
-        if (antennaCameras.Length == 0) 
+        if (antennaCamera == null)
         {
             return;
         }
+
         isViewing = true;
         skipE = true;
-        pan = tilt = 0;
-        camIndex = 0;
+        pan = 0;
+        tilt = 0;
 
         mainCam = Camera.main;
-        if (mainCam) 
+        if (mainCam)
         {
             mainCam.enabled = false;
         }
 
-        var pc = FindObjectOfType<PlayerController>();
-        var cc = FindObjectOfType<CameraController>();
-        if (pc) 
+        PlayerController pc = FindObjectOfType<PlayerController>();
+        CameraController cc = FindObjectOfType<CameraController>();
+        if (pc)
         {
             pc.enabled = false;
         }
-        if (cc) 
+        if (cc)
         {
             cc.enabled = false;
         }
 
-        SetCam(0);
+        antennaCamera.enabled = true;
     }
 
     private void ExitView()
     {
         isViewing = false;
-        for (int i = 0; i < antennaCameras.Length; i++)
+
+        if (antennaCamera != null)
         {
-            if (antennaCameras[i] == null) continue;
-            antennaCameras[i].enabled = false;
-            antennaCameras[i].transform.localRotation = startRot[i];
+            antennaCamera.enabled = false;
+            antennaCamera.transform.localRotation = startRot;
         }
 
         if (mainCam)
@@ -114,13 +125,13 @@ public class AntennaController : MonoBehaviour
             mainCam.enabled = true;
         }
 
-        var pc = FindObjectOfType<PlayerController>();
-        var cc = FindObjectOfType<CameraController>();
-        if (pc) 
+        PlayerController pc = FindObjectOfType<PlayerController>();
+        CameraController cc = FindObjectOfType<CameraController>();
+        if (pc)
         {
             pc.enabled = true;
         }
-        if (cc) 
+        if (cc)
         {
             cc.enabled = true;
         }
@@ -128,45 +139,80 @@ public class AntennaController : MonoBehaviour
 
     private void Update()
     {
-        if (!isViewing) 
+        if (!isViewing)
         {
             return;
         }
 
-        if (skipE) 
+        if (skipE)
         {
-            if (Input.GetKeyDown(KeyCode.E)) 
+            if (Input.GetKeyDown(KeyCode.E))
             {
                 skipE = false;
             }
         }
-        else if (Input.GetKeyDown(KeyCode.E)) 
+        else if (Input.GetKeyDown(KeyCode.E))
         {
-            ExitView(); 
+            ExitView();
             return;
         }
 
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetMouseButtonDown(0) && !signalConfirmed)
         {
-            camIndex = (camIndex + 1) % antennaCameras.Length;
-            pan = tilt = 0;
-            SetCam(camIndex);
+            TrySignal();
         }
 
         pan = Mathf.Clamp(pan + Input.GetAxis("Horizontal") * rotSpeed * Time.deltaTime, -rotLimit, rotLimit);
         tilt = Mathf.Clamp(tilt - Input.GetAxis("Vertical") * rotSpeed * Time.deltaTime, -rotLimit, rotLimit);
 
-        if (antennaCameras[camIndex])
+        if (antennaCamera)
         {
-            antennaCameras[camIndex].transform.localRotation = startRot[camIndex] * Quaternion.Euler(tilt, pan, 0);
+            antennaCamera.transform.localRotation = startRot * Quaternion.Euler(tilt, pan, 0);
+        }
+
+        if (lineRenderer && lineRenderer.enabled && targetAntenna != null && targetAntenna.lineTarget != null)
+        {
+            DrawWire(linePoint.position, targetAntenna.lineTarget.position);
         }
     }
 
-    private void SetCam(int index)
+    private void TrySignal()
     {
-        for (int i = 0; i < antennaCameras.Length; i++)
+        if (antennaCamera == null)
         {
-            if (antennaCameras[i]) antennaCameras[i].enabled = (i == index);
+            return;
+        }
+
+        Ray ray = new Ray(antennaCamera.transform.position, antennaCamera.transform.forward);
+        if (Physics.Raycast(ray, out RaycastHit hit, 500f, signalLayer))
+        {
+            AntennaController other = hit.collider.GetComponentInParent<AntennaController>();
+            if (other != null && other != this && IsPartOf(hit.collider.gameObject, other.dishPart))
+            {
+                signalConfirmed = true;
+                targetAntenna = other;
+                Debug.Log("сигнал установлен");
+
+                lineRenderer.enabled = true;
+                lineRenderer.startWidth = 0.03f;
+                lineRenderer.endWidth = 0.03f;
+                DrawWire(linePoint.position, other.lineTarget.position);
+            }
+        }
+    }
+
+    private void DrawWire(Vector3 from, Vector3 to)
+    {
+        int segments = 20;
+        float sag = Vector3.Distance(from, to) * 0.15f;
+
+        lineRenderer.positionCount = segments + 1;
+        for (int i = 0; i <= segments; i++)
+        {
+            float t = (float)i / segments;
+            Vector3 point = Vector3.Lerp(from, to, t);
+            point.y -= sag * Mathf.Sin(t * Mathf.PI);
+            lineRenderer.SetPosition(i, point);
         }
     }
 }

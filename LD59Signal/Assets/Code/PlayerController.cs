@@ -10,7 +10,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float sprintRecoveryRate = 1f;
     [SerializeField] private float groundDistance = 0.4f;
     [SerializeField] private LayerMask groundMask;
-    public float CurrentSpeed;
+    [SerializeField] private float CurrentSpeed;
 
     private CharacterController controller;
     private Vector3 velocity;

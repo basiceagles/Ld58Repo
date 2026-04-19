@@ -5,12 +5,12 @@ using System.Collections;
 
 public class ItemPickup : MonoBehaviour
 {
-    public float pickupRange = 5f;
-    public float anglePlace = 15f;
-    public float placementDuration = 2f; 
-    public LayerMask interactableLayer, placementLayer, obstacleLayer;
-    public Transform cam;
-    public TextMeshProUGUI popupText;
+    [SerializeField] private float pickupRange = 5f;
+    [SerializeField] private float anglePlace = 15f;
+    [SerializeField] private float placementDuration = 2f; 
+    [SerializeField] private LayerMask interactableLayer, placementLayer, obstacleLayer;
+    [SerializeField] private Transform cam;
+    [SerializeField] private TextMeshProUGUI popupText;
     public Image progressImage;
 
     private Inventory inventory;
@@ -20,6 +20,7 @@ public class ItemPickup : MonoBehaviour
     private bool isPlacing;
     private Coroutine placeRoutine;
     private Vector2 popupOriginalPos;
+    private float ghostRotationY;
 
     private void Awake() => inventory = GetComponent<Inventory>();
 
@@ -213,13 +214,20 @@ public class ItemPickup : MonoBehaviour
             }
 
             Vector3 pos = hit.point + Vector3.up * data.placementYOffset;
+
+            float scroll = Input.GetAxis("Mouse ScrollWheel");
+            if (scroll != 0)
+            {
+                ghostRotationY += scroll > 0 ? 15f : -15f;
+            }
+
             Quaternion rot = Quaternion.identity;
-            
             Vector3 look = Vector3.ProjectOnPlane(cam.forward, Vector3.up).normalized;
             if (look != Vector3.zero) 
             {
                 rot = Quaternion.LookRotation(look, Vector3.up);
             }
+            rot *= Quaternion.Euler(0, ghostRotationY, 0);
 
             if (canPlace)
             {
@@ -332,6 +340,8 @@ public class ItemPickup : MonoBehaviour
             Destroy(currentInvalidGhost); 
             currentInvalidGhost = null; 
         }
+
+        ghostRotationY = 0;
     }
     
     private IEnumerator ShowPopupTextRoutine(string text)
