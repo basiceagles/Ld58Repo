@@ -47206,6 +47206,10 @@ PrefabInstance:
       propertyPath: progressImage
       value: 
       objectReference: {fileID: 201787419}
+    - target: {fileID: 5175130049424637109, guid: 71bd443386866214ab3bd3566f78e053, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5540673476580303873, guid: 71bd443386866214ab3bd3566f78e053, type: 3}
       propertyPath: m_Name
       value: Player
