@@ -1,27 +1,27 @@
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 using System.Collections;
 
-[RequireComponent(typeof(Inventory))]
 public class ItemPickup : MonoBehaviour
 {
-    public float pickupRange = 3f;
-    public LayerMask interactableLayer;
-    public LayerMask placementLayer;
+    public float pickupRange = 5f;
+    public float anglePlace = 15f;
+    public float placementDuration = 2f; 
+    public LayerMask interactableLayer, placementLayer, obstacleLayer;
     public Transform cam;
     public TextMeshProUGUI popupText;
+    public Image progressImage;
 
     private Inventory inventory;
     private Outline lastOutline;
     private GameObject currentGhost;
+    private GameObject currentInvalidGhost;
     private bool isPlacing;
     private Coroutine placeRoutine;
     private Vector2 popupOriginalPos;
 
-    private void Awake()
-    {
-        inventory = GetComponent<Inventory>();
-    }
+    private void Awake() => inventory = GetComponent<Inventory>();
 
     private void Start()
     {
@@ -36,220 +36,325 @@ public class ItemPickup : MonoBehaviour
     private IEnumerator PrewarmOutlines()
     {
         Outline[] allOutlines = FindObjectsOfType<Outline>(true);
-        foreach(var o in allOutlines) o.enabled = true;
+        foreach (var o in allOutlines) 
+        {
+            o.enabled = true;
+        }
         yield return null; 
-        foreach(var o in allOutlines) o.enabled = false;
+        foreach (var o in allOutlines) 
+        {
+            o.enabled = false;
+        }
     }
 
     private void Update()
     {
         HandleHighlightAndPickup();
-
         if (inventory.GetCurrentItem() != null)
         {
-            if (Input.GetKeyDown(KeyCode.Q)) DropObject();
+            if (Input.GetKeyDown(KeyCode.Q)) 
+            {
+                DropObject();
+            }
             HandlePlacement();
         }
-        else
-        {
-            ClearGhost();
-        }
+        else ClearGhost();
     }
 
     private void HandleHighlightAndPickup()
     {
-        if (cam == null || isPlacing) return;
+        if (cam == null || isPlacing) 
+        {
+            return;
+        }
 
         if (Physics.Raycast(cam.position, cam.forward, out RaycastHit hit, pickupRange, interactableLayer))
         {
-            Outline outline = null;
-            ItemData data = hit.collider.GetComponent<ItemData>();
-            if (data == null) data = hit.collider.GetComponentInParent<ItemData>();
-
-            if (data != null)
+            ItemSpawner spawner = hit.collider.GetComponentInParent<ItemSpawner>();
+            if (spawner != null)
             {
-                outline = data.GetComponent<Outline>();
-                if (outline == null) outline = data.GetComponentInChildren<Outline>();
-            }
-            else outline = hit.collider.GetComponent<Outline>();
-
-            if (outline != null)
-            {
-                if (lastOutline != outline)
+                UpdateOutline(spawner.gameObject);
+                if (Input.GetKeyDown(KeyCode.E) && inventory.GetEmptySlot() != -1 && spawner.itemPrefab != null)
                 {
-                    if (lastOutline != null) lastOutline.enabled = false;
-                    outline.enabled = true;
-                    lastOutline = outline;
-                }
-            }
-            else ClearOutline();
-
-            if (Input.GetKeyDown(KeyCode.E))
-            {
-                int emptySlot = inventory.GetEmptySlot();
-                if (emptySlot != -1)
-                {
-                    PickupObject(hit.collider.gameObject, emptySlot, data);
+                    PickupObject(Instantiate(spawner.itemPrefab), inventory.GetEmptySlot(), null);
                     ClearOutline();
                 }
+                return;
             }
+
+            ItemData data = hit.collider.GetComponentInParent<ItemData>();
+            if (data != null)
+            {
+                UpdateOutline(data.gameObject);
+                if (Input.GetKeyDown(KeyCode.E))
+                {
+                    if (data.isPlaced)
+                    {
+                        AntennaController antenna = data.GetComponentInChildren<AntennaController>();
+                        if (!data.isActivated)
+                        {
+                            data.ToggleActivation();
+                        }
+                        else if (antenna != null)
+                        {
+                            antenna.OnInteract(hit.collider.gameObject);
+                        }
+                        else
+                        {
+                            data.ToggleActivation();
+                        }
+                    }
+                    else if (inventory.GetEmptySlot() != -1)
+                    {
+                        PickupObject(data.gameObject, inventory.GetEmptySlot(), data);
+                        ClearOutline();
+                    }
+                }
+                return;
+            }
+            ClearOutline();
         }
         else ClearOutline();
+    }
+
+    private void UpdateOutline(GameObject obj)
+    {
+        Outline outline = obj.GetComponent<Outline>() ?? obj.GetComponentInChildren<Outline>();
+        if (outline != null && lastOutline != outline)
+        {
+            if (lastOutline != null) lastOutline.enabled = false;
+            outline.enabled = true;
+            lastOutline = outline;
+        }
     }
 
     private void ClearOutline()
     {
         if (lastOutline != null)
         {
-            lastOutline.enabled = false;
-            lastOutline = null;
+            lastOutline.enabled = false; 
+            lastOutline = null; 
         }
     }
 
     private void PickupObject(GameObject obj, int slotIndex, ItemData data)
     {
-        Rigidbody rb = obj.GetComponent<Rigidbody>();
-        if (rb != null) rb.isKinematic = true;
+        if (obj.GetComponent<Rigidbody>()) 
+        {
+            obj.GetComponent<Rigidbody>().isKinematic = true;
+        }
 
         inventory.AddItem(obj, slotIndex);
 
-        if (data != null && !string.IsNullOrEmpty(data.itemName))
-            StartCoroutine(ShowPopupTextRoutine(data.itemName));
+        ItemData d = data ?? obj.GetComponent<ItemData>();
+        if (d != null)
+        {
+            d.isPlaced = false;
+            d.StopAnimation();
+            
+            if (!string.IsNullOrEmpty(d.itemName)) 
+            {
+                StartCoroutine(ShowPopupTextRoutine(d.itemName));
+            }
+        }
     }
 
     private void DropObject()
     {
-        if (isPlacing) return;
-
+        if (isPlacing) 
+        {
+            return;
+        }
         GameObject obj = inventory.RemoveCurrentItem();
-        if (obj == null) return;
-
-        Rigidbody rb = obj.GetComponent<Rigidbody>();
-        if (rb != null) rb.isKinematic = false;
-
-        ClearGhost();
+        if (obj != null) 
+        { 
+            if (obj.GetComponent<Rigidbody>()) 
+            {
+                obj.GetComponent<Rigidbody>().isKinematic = false; 
+            }
+            ClearGhost(); 
+        }
     }
 
     private void HandlePlacement()
     {
         GameObject currentItem = inventory.GetCurrentItem();
-        if (currentItem == null) return;
+        if (currentItem == null) 
+        {
+            return;
+        }
 
         ItemData data = currentItem.GetComponent<ItemData>();
         if (data == null || !data.isPlaceable) 
         {
-            ClearGhost();
+            ClearGhost(); 
             return;
         }
 
         if (Physics.Raycast(cam.position, cam.forward, out RaycastHit hit, 5f, placementLayer))
         {
-            if (Vector3.Angle(hit.normal, Vector3.up) < 15f)
+            bool canPlace = Vector3.Angle(hit.normal, Vector3.up) < anglePlace;
+
+            if (currentGhost == null && data.ghostPrefab != null)
             {
-                if (currentGhost == null && data.ghostPrefab != null)
+                currentGhost = Instantiate(data.ghostPrefab);
+                Renderer[] rs = currentGhost.GetComponentsInChildren<Renderer>();
+                if (rs.Length > 0)
                 {
-                    currentGhost = Instantiate(data.ghostPrefab);
-                    
-                    Renderer[] renderers = currentGhost.GetComponentsInChildren<Renderer>();
-                    if (renderers.Length > 0)
-                    {
-                        Bounds b = renderers[0].bounds;
-                        for (int i = 1; i < renderers.Length; i++) b.Encapsulate(renderers[i].bounds);
-                        data.placementYOffset = currentGhost.transform.position.y - b.min.y;
-                    }
-                }
-
-                Vector3 placementPos = hit.point + Vector3.up * data.placementYOffset;
-
-                if (currentGhost != null)
-                {
-                    currentGhost.transform.position = placementPos;
-                    Vector3 lookDir = Vector3.ProjectOnPlane(cam.forward, Vector3.up).normalized;
-                    if (lookDir != Vector3.zero)
-                        currentGhost.transform.rotation = Quaternion.LookRotation(lookDir, Vector3.up);
-                }
-
-                if (Input.GetMouseButtonDown(0) && !isPlacing)
-                {
-                    placeRoutine = StartCoroutine(PlaceHoldRoutine(placementPos, currentGhost.transform.rotation, data));
+                    Bounds b = rs[0].bounds;
+                    for (int i = 1; i < rs.Length; i++) { b.Encapsulate(rs[i].bounds); }
+                    data.placementYOffset = currentGhost.transform.position.y - b.min.y;
                 }
             }
-            else ClearGhost();
+
+            if (currentInvalidGhost == null && data.invalidGhostPrefab != null)
+            {
+                currentInvalidGhost = Instantiate(data.invalidGhostPrefab);
+            }
+
+            Vector3 pos = hit.point + Vector3.up * data.placementYOffset;
+            Quaternion rot = Quaternion.identity;
+            
+            Vector3 look = Vector3.ProjectOnPlane(cam.forward, Vector3.up).normalized;
+            if (look != Vector3.zero) 
+            {
+                rot = Quaternion.LookRotation(look, Vector3.up);
+            }
+
+            if (canPlace)
+            {
+                GameObject checkObj = currentGhost ?? currentInvalidGhost;
+                if (checkObj != null)
+                {
+                    Renderer r = checkObj.GetComponentInChildren<Renderer>();
+                    Vector3 extents = r != null ? r.bounds.extents * 0.95f : Vector3.one * 0.5f;
+                    if (Physics.CheckBox(pos + Vector3.up * (extents.y + 0.05f), extents, rot, obstacleLayer))
+                    {
+                        canPlace = false;
+                    }
+                }
+            }
+
+            GameObject activeGhost = canPlace ? currentGhost : currentInvalidGhost;
+            GameObject inactiveGhost = canPlace ? currentInvalidGhost : currentGhost;
+
+            if (inactiveGhost != null) 
+            {
+                inactiveGhost.SetActive(false);
+            }
+
+            if (activeGhost != null)
+            {
+                activeGhost.SetActive(true);
+                activeGhost.transform.position = pos;
+                activeGhost.transform.rotation = rot;
+            }
+
+            if (canPlace && Input.GetMouseButtonDown(0) && !isPlacing)
+            {
+                placeRoutine = StartCoroutine(PlaceHoldRoutine(pos, rot, data));
+            }
         }
-        else ClearGhost();
+        else 
+        {
+            ClearGhost();
+        }
 
         if (Input.GetMouseButtonUp(0) && isPlacing)
         {
             StopCoroutine(placeRoutine);
             isPlacing = false;
-            if (data != null && data.placementAudioSource != null) data.placementAudioSource.Stop();
+            if (progressImage != null) 
+            {
+                progressImage.fillAmount = 0;
+            }
+            if (data.placementAudioSource != null) 
+            {
+                data.placementAudioSource.Stop();
+            }
         }
     }
 
     private IEnumerator PlaceHoldRoutine(Vector3 pos, Quaternion rot, ItemData data)
     {
         isPlacing = true;
-        
-        if (data.placementAudioSource != null) data.placementAudioSource.Play();
-
-        float holdTimer = 0f;
-        while (holdTimer < 2f)
+        if (data.placementAudioSource) 
         {
-            holdTimer += Time.deltaTime;
-            yield return null;
+            data.placementAudioSource.Play();
+        }
+
+        float timer = 0f;
+        while (timer < placementDuration) 
+        {
+            timer += Time.deltaTime; 
+            if (progressImage != null)
+            {
+                progressImage.fillAmount = timer / placementDuration;
+            }
+            yield return null; 
         }
 
         GameObject obj = inventory.RemoveCurrentItem();
         if (obj != null)
         {
-            obj.transform.position = pos;
+            obj.transform.position = pos; 
             obj.transform.rotation = rot;
-            
-            Rigidbody rb = obj.GetComponent<Rigidbody>();
-            if (rb != null) rb.isKinematic = true;
+            if (obj.GetComponent<Rigidbody>()) 
+            {
+                obj.GetComponent<Rigidbody>().isKinematic = true;
+            }
+            ItemData id = obj.GetComponent<ItemData>();
+            if (id != null) 
+            {
+                id.isPlaced = true;
+            }
         }
 
-        isPlacing = false;
+        if (progressImage != null)
+        {
+            progressImage.fillAmount = 0;
+        }
+        
+        isPlacing = false; 
         ClearGhost();
     }
 
     private void ClearGhost()
     {
-        if (currentGhost != null)
-        {
-            Destroy(currentGhost);
-            currentGhost = null;
+        if (currentGhost != null) 
+        { 
+            Destroy(currentGhost); 
+            currentGhost = null; 
+        }
+
+        if (currentInvalidGhost != null) 
+        { 
+            Destroy(currentInvalidGhost); 
+            currentInvalidGhost = null; 
         }
     }
     
     private IEnumerator ShowPopupTextRoutine(string text)
     {
-        if (popupText == null) yield break;
-        
-        popupText.text = text;
+        if (popupText == null) 
+        {
+            yield break;
+        }
+        popupText.text = text; 
         popupText.gameObject.SetActive(true);
-
         RectTransform rt = popupText.rectTransform;
-        Vector2 startPos = popupOriginalPos;
-        Vector2 endPos = popupOriginalPos + new Vector2(0, 100f);
-        
-        float timer = 0f;
-        float duration = 2.5f;
+        float timer = 0f, duration = 2.5f;
 
         while (timer < duration)
         {
-            timer += Time.deltaTime;
+            timer += Time.deltaTime; 
             float t = timer / duration;
-
-            rt.anchoredPosition = Vector2.Lerp(startPos, endPos, t * t); 
-            
-            Color c = popupText.color;
+            rt.anchoredPosition = Vector2.Lerp(popupOriginalPos, popupOriginalPos + new Vector2(0, 100f), t * t); 
+            Color c = popupText.color; 
             c.a = t > 0.5f ? Mathf.Lerp(1f, 0f, (t - 0.5f) * 2f) : 1f;
             popupText.color = c;
-
             yield return null;
         }
-        
         popupText.gameObject.SetActive(false);
     }
 }

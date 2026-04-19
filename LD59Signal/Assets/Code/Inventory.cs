@@ -35,12 +35,18 @@ public class Inventory : MonoBehaviour
             return;
         }
 
-        if (slots[currentSlot] != null) slots[currentSlot].SetActive(false);
+        if (slots[currentSlot] != null) 
+        {
+            slots[currentSlot].SetActive(false);
+        }
 
         currentSlot = index;
         isHidden = false;
 
-        if (slots[currentSlot] != null) slots[currentSlot].SetActive(true);
+        if (slots[currentSlot] != null) 
+        {
+            slots[currentSlot].SetActive(true);
+        }
 
         UpdateUI();
     }
@@ -76,7 +82,10 @@ public class Inventory : MonoBehaviour
 
     public GameObject RemoveCurrentItem()
     {
-        if (slots[currentSlot] == null || isHidden) return null;
+        if (slots[currentSlot] == null || isHidden) 
+        {
+            return null;
+        }
         
         GameObject obj = slots[currentSlot];
         slots[currentSlot] = null;
@@ -90,7 +99,10 @@ public class Inventory : MonoBehaviour
 
     public GameObject GetCurrentItem()
     {
-        if (isHidden) return null;
+        if (isHidden) 
+        {
+            return null;
+        }
         return slots[currentSlot];
     }
 
@@ -106,11 +118,17 @@ public class Inventory : MonoBehaviour
             if (slotIcons != null && i < slotIcons.Length && slotIcons[i] != null)
             {
                 if (currentSlot == i && !isHidden && slots[i] != null)
+                {
                     slotIcons[i].color = activeColor;
+                }
                 else if (slots[i] != null)
+                {
                     slotIcons[i].color = filledColor;
+                }
                 else
+                {
                     slotIcons[i].color = emptyColor;
+                }
             }
         }
     }
