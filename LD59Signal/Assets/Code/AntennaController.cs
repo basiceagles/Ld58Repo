@@ -172,7 +172,7 @@ public class AntennaController : MonoBehaviour
 
         if (lineRenderer && lineRenderer.enabled && targetAntenna != null && targetAntenna.lineTarget != null)
         {
-            DrawWire(linePoint.position, targetAntenna.lineTarget.position);
+            DrawSignalLine(linePoint.position, targetAntenna.lineTarget.position);
         }
     }
 
@@ -196,23 +196,15 @@ public class AntennaController : MonoBehaviour
                 lineRenderer.enabled = true;
                 lineRenderer.startWidth = 0.03f;
                 lineRenderer.endWidth = 0.03f;
-                DrawWire(linePoint.position, other.lineTarget.position);
+                DrawSignalLine(linePoint.position, other.lineTarget.position);
             }
         }
     }
 
-    private void DrawWire(Vector3 from, Vector3 to)
+    private void DrawSignalLine(Vector3 from, Vector3 to)
     {
-        int segments = 20;
-        float sag = Vector3.Distance(from, to) * 0.15f;
-
-        lineRenderer.positionCount = segments + 1;
-        for (int i = 0; i <= segments; i++)
-        {
-            float t = (float)i / segments;
-            Vector3 point = Vector3.Lerp(from, to, t);
-            point.y -= sag * Mathf.Sin(t * Mathf.PI);
-            lineRenderer.SetPosition(i, point);
-        }
+        lineRenderer.positionCount = 2;
+        lineRenderer.SetPosition(0, from);
+        lineRenderer.SetPosition(1, to);
     }
 }
