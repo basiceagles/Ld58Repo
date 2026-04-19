@@ -1,12 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.InputSystem;
-using UnityEngine.Rendering;
-using UnityEngine.Rendering.Universal;
 using UnityEngine.Audio;
-using System;
-using UnityEngine.SceneManagement;
 
 public class GameSettings : MonoBehaviour
 {
@@ -28,58 +23,37 @@ public class GameSettings : MonoBehaviour
     [SerializeField] private Slider musicSlider;
 
     private Resolution[] resolutions;
-
-    // FIXED / ADDED FIELDS
-    private int targetFPS = -1;
     private int lastDisplayCount = 0;
-    private int lastMonitorRefreshRate = 0;
     private List<int> availableRefreshRates = new List<int>();
+    private List<string> uniqueResolutions = new List<string>();
 
-    List<string> uniqueResolutions = new List<string>();
-
-    void Update()
+    private void Update()
     {
         CheckForDisplayChanges();
     }
 
-    void Start()
+    private void Start()
     {
         SetupResolutionDropdown();
-        SetupRefreshRateDropdown();
+        UpdateAvailableRefreshRates();
 
         if (!PlayerPrefs.HasKey("FirstLaunch"))
         {
             Resolution currentRes = Screen.currentResolution;
-            int maxRefreshRate = currentRes.refreshRate;
-
-            foreach (Resolution res in resolutions)
-            {
-                if (res.width == currentRes.width && res.height == currentRes.height)
-                {
-                    if (res.refreshRate > maxRefreshRate)
-                    {
-                        maxRefreshRate = res.refreshRate;
-                    }
-                }
-            }
-
-            Screen.SetResolution(currentRes.width, currentRes.height, FullScreenMode.FullScreenWindow, maxRefreshRate);
-
-            int optimalIndex = 0;
-            for (int i = 0; i < resolutions.Length; i++)
-            {
-                if (resolutions[i].width == currentRes.width &&
-                    resolutions[i].height == currentRes.height &&
-                    resolutions[i].refreshRate == maxRefreshRate)
-                {
-                    optimalIndex = i;
-                    break;
-                }
-            }
-
+            
             PlayerPrefs.SetInt("FirstLaunch", 1);
             PlayerPrefs.SetInt("Fullscreen", 1);
-            PlayerPrefs.SetInt("ResolutionIndex", optimalIndex);
+            
+            string resString = currentRes.width + "x" + currentRes.height;
+            int resIndex = uniqueResolutions.IndexOf(resString);
+            if (resIndex == -1) resIndex = uniqueResolutions.Count - 1;
+            PlayerPrefs.SetInt("ResolutionIndex", resIndex);
+            
+            UpdateAvailableRefreshRates();
+            int maxHzIndex = availableRefreshRates.Count - 1;
+            PlayerPrefs.SetInt("RefreshRateIndex", maxHzIndex);
+            
+            PlayerPrefs.SetFloat("Sensitivity", 100f);
             PlayerPrefs.Save();
         }
 
@@ -89,59 +63,73 @@ public class GameSettings : MonoBehaviour
 
     private void CheckForDisplayChanges()
     {
-        int currentMonitorRefreshRate = Screen.currentResolution.refreshRate;
-
-        if (Display.displays.Length != lastDisplayCount || currentMonitorRefreshRate != lastMonitorRefreshRate)
+        if (Display.displays.Length != lastDisplayCount)
         {
             lastDisplayCount = Display.displays.Length;
-            lastMonitorRefreshRate = currentMonitorRefreshRate;
-
             SetupResolutionDropdown();
-            SetupRefreshRateDropdown();
-
-            if (QualitySettings.vSyncCount == 0)
-            {
-                ApplyCurrentSettings();
-            }
+            UpdateAvailableRefreshRates();
+            ApplyCurrentSettings();
         }
     }
 
     private void ApplyCurrentSettings()
     {
+        if (uniqueResolutions.Count == 0 || resolutionDropdown.value >= uniqueResolutions.Count) return;
+        
         string resolutionString = uniqueResolutions[resolutionDropdown.value];
         string[] parts = resolutionString.Split('x');
         int width = int.Parse(parts[0]);
         int height = int.Parse(parts[1]);
-        int refreshRate = availableRefreshRates[refreshRateDropdown.value];
-
-        int actualRefreshRate = refreshRate > 0 ? refreshRate : Screen.currentResolution.refreshRate;
-
-        if (!IsResolutionSupported(width, height, actualRefreshRate))
+        
+        int refreshRate = 0;
+        if (availableRefreshRates.Count > 0 && refreshRateDropdown.value < availableRefreshRates.Count)
         {
-            actualRefreshRate = GetNearestSupportedRefreshRate(width, height, actualRefreshRate);
+            refreshRate = availableRefreshRates[refreshRateDropdown.value];
         }
 
-        Screen.SetResolution(width, height, Screen.fullScreen, actualRefreshRate);
+        bool isFullscreen = fullscreenToggle.isOn;
+        FullScreenMode mode = isFullscreen ? FullScreenMode.FullScreenWindow : FullScreenMode.Windowed;
 
-        if (QualitySettings.vSyncCount == 0)
+        if (refreshRate > 0)
         {
-            if (refreshRate == 0)
-            {
-                targetFPS = -1;
-                Application.targetFrameRate = -1;
-            }
-            else
-            {
-                targetFPS = refreshRate;
-                Application.targetFrameRate = targetFPS;
-            }
+            Screen.SetResolution(width, height, mode, refreshRate);
+            QualitySettings.vSyncCount = 0;
+            Application.targetFrameRate = refreshRate;
+        }
+        else
+        {
+            Screen.SetResolution(width, height, mode);
+            QualitySettings.vSyncCount = 0; 
+            Application.targetFrameRate = -1;
         }
     }
 
     private void RealTimeLoad()
     {
+        sfxSlider.onValueChanged.RemoveAllListeners();
+        musicSlider.onValueChanged.RemoveAllListeners();
+        masterSlider?.onValueChanged.RemoveAllListeners();
+        fullscreenToggle.onValueChanged.RemoveAllListeners();
+        sensitivitySlider.onValueChanged.RemoveAllListeners();
+        resolutionDropdown.onValueChanged.RemoveAllListeners();
+        refreshRateDropdown.onValueChanged.RemoveAllListeners();
+
         sfxSlider.onValueChanged.AddListener(SfxMixerVolume);
         musicSlider.onValueChanged.AddListener(MusicMixerVolume);
+        if (masterSlider != null) masterSlider.onValueChanged.AddListener(MasterMixerVolume);
+        
+        fullscreenToggle.onValueChanged.AddListener(SetFullscreen);
+        sensitivitySlider.onValueChanged.AddListener(SetSensitivity);
+        resolutionDropdown.onValueChanged.AddListener(SetResolution);
+        refreshRateDropdown.onValueChanged.AddListener(SetRefreshRate);
+    }
+
+    public void MasterMixerVolume(float sliderValue)
+    {
+        float volumeDB = ConvertToDecibels(sliderValue);
+        masterMixerGroup.audioMixer.SetFloat("Master", volumeDB);
+        PlayerPrefs.SetFloat("MasterVolume", sliderValue);
+        PlayerPrefs.Save();
     }
 
     public void SfxMixerVolume(float sliderValue)
@@ -149,6 +137,7 @@ public class GameSettings : MonoBehaviour
         float volumeDB = ConvertToDecibels(sliderValue);
         sfxMixerGroup.audioMixer.SetFloat("SFX", volumeDB);
         PlayerPrefs.SetFloat("SfxVolume", sliderValue);
+        PlayerPrefs.Save();
     }
 
     public void MusicMixerVolume(float sliderValue)
@@ -156,15 +145,13 @@ public class GameSettings : MonoBehaviour
         float volumeDB = ConvertToDecibels(sliderValue);
         musicMixerGroup.audioMixer.SetFloat("Music", volumeDB);
         PlayerPrefs.SetFloat("MusicVolume", sliderValue);
+        PlayerPrefs.Save();
     }
 
     private float ConvertToDecibels(float linearVolume)
     {
-        if (linearVolume <= 0.001f)
-            return -80f;
-
-        float adjustedVolume = Mathf.Pow(linearVolume, 0.7f);
-        return Mathf.Log10(adjustedVolume) * 20f;
+        if (linearVolume <= 0.001f) return -80f;
+        return Mathf.Log10(Mathf.Pow(linearVolume, 0.7f)) * 20f;
     }
 
     private void SetupResolutionDropdown()
@@ -173,89 +160,89 @@ public class GameSettings : MonoBehaviour
         resolutionDropdown.ClearOptions();
         uniqueResolutions.Clear();
 
-        int currentResolutionIndex = 0;
+        string currentResString = Screen.width + "x" + Screen.height;
 
-        for (int i = 0; i < resolutions.Length; i++)
+        for (int i = resolutions.Length - 1; i >= 0; i--)
         {
             string resolutionString = resolutions[i].width + "x" + resolutions[i].height;
-
-            if (!uniqueResolutions.Contains(resolutionString))
-            {
-                uniqueResolutions.Add(resolutionString);
-            }
-
-            if (resolutions[i].width == Screen.currentResolution.width &&
-                resolutions[i].height == Screen.currentResolution.height)
-            {
-                currentResolutionIndex = uniqueResolutions.IndexOf(resolutionString);
-            }
+            if (!uniqueResolutions.Contains(resolutionString)) uniqueResolutions.Add(resolutionString);
         }
-
+        
         resolutionDropdown.AddOptions(uniqueResolutions);
-        resolutionDropdown.value = currentResolutionIndex;
-        resolutionDropdown.RefreshShownValue();
-    }
-
-    private void SetupRefreshRateDropdown()
-    {
-        UpdateAvailableRefreshRates();
-
-        int currentRefreshRateIndex = 1;
-        for (int i = 0; i < availableRefreshRates.Count; i++)
-        {
-            if (availableRefreshRates[i] == Screen.currentResolution.refreshRate)
-            {
-                currentRefreshRateIndex = i;
-                break;
-            }
-        }
-
-        refreshRateDropdown.value = currentRefreshRateIndex;
-        refreshRateDropdown.RefreshShownValue();
+        int currentResolutionIndex = uniqueResolutions.IndexOf(currentResString);
+        if (currentResolutionIndex != -1) resolutionDropdown.SetValueWithoutNotify(currentResolutionIndex);
     }
 
     private void UpdateAvailableRefreshRates()
     {
+        int previousHz = -1;
+        if (availableRefreshRates.Count > 0 && refreshRateDropdown.value < availableRefreshRates.Count)
+        {
+            previousHz = availableRefreshRates[refreshRateDropdown.value];
+        }
+
         availableRefreshRates.Clear();
         refreshRateDropdown.ClearOptions();
+
+        if (uniqueResolutions.Count == 0 || resolutionDropdown.value >= uniqueResolutions.Count) return;
 
         string currentResolutionString = uniqueResolutions[resolutionDropdown.value];
         string[] parts = currentResolutionString.Split('x');
         int width = int.Parse(parts[0]);
         int height = int.Parse(parts[1]);
 
-        List<string> refreshRateOptions = new List<string>();
-
+        List<string> refreshRateOptions = new List<string> { "No limits" };
         availableRefreshRates.Add(0);
-        refreshRateOptions.Add("No limits");
 
+        List<int> rates = new List<int>();
         for (int i = 0; i < resolutions.Length; i++)
         {
             if (resolutions[i].width == width && resolutions[i].height == height)
             {
-                if (!availableRefreshRates.Contains(resolutions[i].refreshRate))
-                {
-                    availableRefreshRates.Add(resolutions[i].refreshRate);
-                    refreshRateOptions.Add(resolutions[i].refreshRate + "Hz");
-                }
+                if (!rates.Contains(resolutions[i].refreshRate)) rates.Add(resolutions[i].refreshRate);
             }
+        }
+        
+        rates.Sort();
+        foreach (int rate in rates)
+        {
+            availableRefreshRates.Add(rate);
+            refreshRateOptions.Add(rate + "Hz");
         }
 
         refreshRateDropdown.AddOptions(refreshRateOptions);
+
+        if (previousHz != -1)
+        {
+            int newIndex = availableRefreshRates.IndexOf(previousHz);
+            if (newIndex != -1) refreshRateDropdown.SetValueWithoutNotify(newIndex);
+        }
+        
+        refreshRateDropdown.RefreshShownValue();
     }
 
     private void LoadSettings()
     {
-        LoadDropdownValue("ResolutionIndex", resolutionDropdown, uniqueResolutions.Count);
-        LoadDropdownValue("RefreshRateIndex", refreshRateDropdown, availableRefreshRates.Count);
+        int resIndex = PlayerPrefs.GetInt("ResolutionIndex", resolutionDropdown.value);
+        if (resIndex < uniqueResolutions.Count) resolutionDropdown.SetValueWithoutNotify(resIndex);
+        
+        UpdateAvailableRefreshRates();
+        
+        int hzIndex = PlayerPrefs.GetInt("RefreshRateIndex", -1);
+        if (hzIndex != -1 && hzIndex < availableRefreshRates.Count) refreshRateDropdown.SetValueWithoutNotify(hzIndex);
 
         bool isFullscreen = PlayerPrefs.GetInt("Fullscreen", 1) == 1;
         fullscreenToggle.SetIsOnWithoutNotify(isFullscreen);
-        SetFullscreen(isFullscreen);
 
-        float sensitivity = PlayerPrefs.GetFloat("Sensitivity", 1f);
+        float sensitivity = PlayerPrefs.GetFloat("Sensitivity", 100f);
         sensitivitySlider.SetValueWithoutNotify(sensitivity);
-        SetSensitivity(sensitivity);
+        
+        float masterVolume = PlayerPrefs.GetFloat("MasterVolume", 0.8f);
+        if (masterSlider != null)
+        {
+            masterSlider.SetValueWithoutNotify(masterVolume);
+            MasterMixerVolume(masterVolume);
+        }
 
         float sfxVolume = PlayerPrefs.GetFloat("SfxVolume", 0.8f);
         sfxSlider.SetValueWithoutNotify(sfxVolume);
@@ -264,68 +251,31 @@ public class GameSettings : MonoBehaviour
         float musicVolume = PlayerPrefs.GetFloat("MusicVolume", 0.8f);
         musicSlider.SetValueWithoutNotify(musicVolume);
         MusicMixerVolume(musicVolume);
-    }
-
-    private void LoadDropdownValue(string key, TMPro.TMP_Dropdown dropdown, int maxCount)
-    {
-        int savedValue = PlayerPrefs.GetInt(key, dropdown.value);
-        if (savedValue < maxCount)
-        {
-            dropdown.value = savedValue;
-        }
+        
+        ApplyCurrentSettings();
+        SetSensitivity(sensitivity);
     }
 
     public void SetResolution(int resolutionIndex)
     {
+        PlayerPrefs.SetInt("ResolutionIndex", resolutionIndex);
         UpdateAvailableRefreshRates();
         ApplyCurrentSettings();
+        PlayerPrefs.Save();
     }
 
     public void SetRefreshRate(int refreshRateIndex)
     {
+        PlayerPrefs.SetInt("RefreshRateIndex", refreshRateIndex);
         ApplyCurrentSettings();
-    }
-
-    private bool IsResolutionSupported(int width, int height, int refreshRate)
-    {
-        foreach (Resolution res in Screen.resolutions)
-        {
-            if (res.width == width && res.height == height && res.refreshRate == refreshRate)
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private int GetNearestSupportedRefreshRate(int width, int height, int targetRefreshRate)
-    {
-        int nearestRate = 60;
-        int minDifference = int.MaxValue;
-
-        foreach (Resolution res in Screen.resolutions)
-        {
-            if (res.width == width && res.height == height)
-            {
-                int difference = Mathf.Abs(res.refreshRate - targetRefreshRate);
-                if (difference < minDifference)
-                {
-                    minDifference = difference;
-                    nearestRate = res.refreshRate;
-                }
-            }
-        }
-
-        return nearestRate;
+        PlayerPrefs.Save();
     }
 
     public void SetFullscreen(bool isFullScreen)
     {
-        Screen.fullScreenMode = isFullScreen
-            ? FullScreenMode.FullScreenWindow
-            : FullScreenMode.Windowed;
-
-        Screen.fullScreen = isFullScreen;
+        PlayerPrefs.SetInt("Fullscreen", isFullScreen ? 1 : 0);
+        ApplyCurrentSettings();
+        PlayerPrefs.Save();
     }
 
     public void SetSensitivity(float sensitivity)
@@ -334,7 +284,13 @@ public class GameSettings : MonoBehaviour
         {
             cameraController.SetSensitivity(sensitivity);
         }
+        else
+        {
+            var foundController = FindAnyObjectByType<CameraController>();
+            if (foundController != null) foundController.SetSensitivity(sensitivity);
+        }
 
         PlayerPrefs.SetFloat("Sensitivity", sensitivity);
+        PlayerPrefs.Save();
     }
 }

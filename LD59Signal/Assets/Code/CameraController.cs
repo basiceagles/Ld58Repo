@@ -13,7 +13,14 @@ public class CameraController : MonoBehaviour
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+
+        // Use the saved value directly without hidden multipliers
+        float savedSensitivity = PlayerPrefs.GetFloat("Sensitivity", 100f);
+        SetSensitivity(savedSensitivity);
+        Debug.Log($"[CameraController] Applied Mouse Sensitivity: {mouseSensitivity}");
     }
+
+
 
     private void Update()
     {
@@ -32,3 +39,4 @@ public class CameraController : MonoBehaviour
         mouseSensitivity = value;
     }
 }
+
