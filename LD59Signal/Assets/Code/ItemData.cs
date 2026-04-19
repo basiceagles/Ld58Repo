@@ -7,6 +7,9 @@ public class ItemData : MonoBehaviour
     public GameObject ghostPrefab;
     public GameObject invalidGhostPrefab;
     public float placementYOffset;
+    public Vector3 heldRotationOffset;
+    public Vector3 heldPositionOffset;
+    public bool pickupOnBodyHoldPoint;
     public AudioSource placementAudioSource;
     public Sprite icon;
 

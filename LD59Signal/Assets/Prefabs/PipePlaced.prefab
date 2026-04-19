@@ -268,6 +268,9 @@ MonoBehaviour:
   ghostPrefab: {fileID: 242615443780885100, guid: 2821255f599e197449670d7c175c97eb, type: 3}
   invalidGhostPrefab: {fileID: 4760828457892996675, guid: 07a879f8765f3f74db82a44313ca92c4, type: 3}
   placementYOffset: 0
+  heldRotationOffset: {x: 0, y: 0, z: 0}
+  heldPositionOffset: {x: 0.25, y: -0.6, z: -0.25}
+  pickupOnBodyHoldPoint: 1
   placementAudioSource: {fileID: 0}
   icon: {fileID: 21300000, guid: c3bef6a56f96da243937da7c405c1a2c, type: 3}
   itemAnimator: {fileID: 1614146641104480189}
@@ -752,7 +755,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4214726985332892257, guid: 4a1e392418d009f4bbc06552a9172c09, type: 3}
       propertyPath: m_Layer
-      value: 9
+      value: 14
       objectReference: {fileID: 0}
     - target: {fileID: 4321514657177891973, guid: 4a1e392418d009f4bbc06552a9172c09, type: 3}
       propertyPath: m_CastShadows

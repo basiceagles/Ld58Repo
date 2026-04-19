@@ -306,7 +306,7 @@ public class ItemPickup : MonoBehaviour
         GameObject obj = inventory.RemoveCurrentItem();
         if (obj != null)
         {
-            obj.transform.position = pos; 
+            obj.transform.position = pos;
             obj.transform.rotation = rot;
             if (obj.GetComponent<Rigidbody>()) 
             {

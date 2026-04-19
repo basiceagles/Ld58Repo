@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1551328422076471997
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3646789602636821256}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3646789602636821256
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1551328422076471997}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.39500007, y: 0.0059999255, z: 0.78800017}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 819658352341459718}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5540673476580303873
 GameObject:
   m_ObjectHideFlags: 0
@@ -37,6 +68,7 @@ Transform:
   m_LocalScale: {x: 0.6268798, y: 0.6268798, z: 0.6268798}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 3646789602636821256}
   - {fileID: 8038571964911176102}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -179,14 +211,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pickupRange: 1.5
+  anglePlace: 15
+  placementDuration: 2
   interactableLayer:
     serializedVersion: 2
-    m_Bits: 128
+    m_Bits: 4224
   placementLayer:
     serializedVersion: 2
     m_Bits: 64
+  obstacleLayer:
+    serializedVersion: 2
+    m_Bits: 8192
   cam: {fileID: 8038571964911176102}
   popupText: {fileID: 0}
+  progressImage: {fileID: 0}
 --- !u!114 &1647152324986666900
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -199,11 +237,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca3259e87c949604f8ca10907b56f644, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  slotIcons: []
-  emptyColor: {r: 1, g: 1, b: 1, a: 0.3}
+  slotIcons:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  slotRects:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  layoutGroup: {fileID: 0}
   filledColor: {r: 1, g: 1, b: 1, a: 0.8}
-  activeColor: {r: 0, g: 1, b: 0, a: 1}
+  sizeTransitionSpeed: 10
+  defaultSlotSize: 70
+  activeSlotSize: 90
   holdPoint: {fileID: 2893302657593948030}
+  bodyHoldPoint: {fileID: 3646789602636821256}
 --- !u!114 &5175130049424637109
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -211,7 +259,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5540673476580303873}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a04db1c8a6a50ec4685d9ebbedfe74d4, type: 3}
   m_Name: 
@@ -230,6 +278,7 @@ GameObject:
   - component: {fileID: 5901059864443193805}
   - component: {fileID: 2747804553340676861}
   - component: {fileID: 4446201441147674429}
+  - component: {fileID: 6705623724842160145}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -372,6 +421,22 @@ MonoBehaviour:
   minWaitAngle: -90
   maxWaitAngle: 90
   playerBody: {fileID: 819658352341459718}
+--- !u!114 &6705623724842160145
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7789926150582554479}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 10e435d11367c194d822f6384f5272b7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  shakeDuration: 0.5
+  shakeMagnitude: 0.1
+  dampingSpeed: 1
+  multiplier: 2
 --- !u!1 &7797950487594739806
 GameObject:
   m_ObjectHideFlags: 0

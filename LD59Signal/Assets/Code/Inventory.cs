@@ -5,12 +5,13 @@ public class Inventory : MonoBehaviour
 {
     public Image[] slotIcons;
     public RectTransform[] slotRects;
-    public RectTransform layoutGroupParent;
+    public HorizontalLayoutGroup layoutGroup;
     public Color filledColor = new Color(1, 1, 1, 0.8f);
     public float sizeTransitionSpeed = 10f;
     public float defaultSlotSize = 70f;
     public float activeSlotSize = 90f;
     public Transform holdPoint;
+    public Transform bodyHoldPoint;
 
     private GameObject[] slots = new GameObject[3];
     private ItemData[] slotData = new ItemData[3];
@@ -67,9 +68,9 @@ public class Inventory : MonoBehaviour
             }
         }
 
-        if (anySizeChanged && layoutGroupParent != null)
+        if (anySizeChanged && layoutGroup != null)
         {
-            LayoutRebuilder.ForceRebuildLayoutImmediate(layoutGroupParent);
+            LayoutRebuilder.ForceRebuildLayoutImmediate(layoutGroup.GetComponent<RectTransform>());
         }
     }
 
@@ -94,6 +95,16 @@ public class Inventory : MonoBehaviour
         if (slots[currentSlot] != null) 
         {
             slots[currentSlot].SetActive(true);
+            if (slotData[currentSlot] != null)
+            {
+                Transform targetHoldPoint = slotData[currentSlot].pickupOnBodyHoldPoint && bodyHoldPoint != null ? bodyHoldPoint : holdPoint;
+                if (slots[currentSlot].transform.parent != targetHoldPoint)
+                {
+                    slots[currentSlot].transform.SetParent(targetHoldPoint);
+                }
+                slots[currentSlot].transform.localPosition = slotData[currentSlot].heldPositionOffset;
+                slots[currentSlot].transform.localRotation = Quaternion.Euler(slotData[currentSlot].heldRotationOffset);
+            }
         }
 
         UpdateUI();
@@ -129,9 +140,10 @@ public class Inventory : MonoBehaviour
         slots[index] = obj;
         slotData[index] = data;
         
-        obj.transform.SetParent(holdPoint);
-        obj.transform.localPosition = Vector3.zero;
-        obj.transform.localRotation = Quaternion.identity;
+        Transform targetHoldPoint = data.pickupOnBodyHoldPoint && bodyHoldPoint != null ? bodyHoldPoint : holdPoint;
+        obj.transform.SetParent(targetHoldPoint);
+        obj.transform.localPosition = data.heldPositionOffset;
+        obj.transform.localRotation = Quaternion.Euler(data.heldRotationOffset);
 
         if (currentSlot != index && slots[currentSlot] != null)
         {
