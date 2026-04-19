@@ -11,6 +11,8 @@ public class ItemPickup : MonoBehaviour
     [SerializeField] private LayerMask interactableLayer, placementLayer, obstacleLayer;
     [SerializeField] private Transform cam;
     [SerializeField] private TextMeshProUGUI popupText;
+    [SerializeField] private GameObject interactionPrompt;
+    [SerializeField] private TextMeshProUGUI promptText;
     public Image progressImage;
 
     private Inventory inventory;
@@ -22,101 +24,162 @@ public class ItemPickup : MonoBehaviour
     private Vector2 popupOriginalPos;
     private float ghostRotationY;
 
-    private void Awake() => inventory = GetComponent<Inventory>();
-
-    private void Start()
+    private void Awake()
     {
-        StartCoroutine(PrewarmOutlines());
-        if (popupText != null)
-        {
-            popupOriginalPos = popupText.rectTransform.anchoredPosition;
-            popupText.gameObject.SetActive(false);
-        }
-    }
+        inventory = GetComponent<Inventory>();
+        if (interactionPrompt != null) interactionPrompt.SetActive(false);
+        if (promptText != null) promptText.gameObject.SetActive(false);
+        if (popupText != null) popupText.gameObject.SetActive(false);
 
-    private IEnumerator PrewarmOutlines()
-    {
-        Outline[] allOutlines = FindObjectsOfType<Outline>(true);
-        foreach (var o in allOutlines) 
-        {
-            o.enabled = true;
-        }
-        yield return null; 
-        foreach (var o in allOutlines) 
+        foreach (var o in FindObjectsOfType<Outline>(true))
         {
             o.enabled = false;
         }
     }
 
+    private void Start()
+    {
+        if (popupText != null)
+        {
+            popupOriginalPos = popupText.rectTransform.anchoredPosition;
+            popupText.gameObject.SetActive(false);
+        }
+        if (interactionPrompt != null) interactionPrompt.SetActive(false);
+
+        foreach (var o in FindObjectsOfType<Outline>(true)) o.enabled = false;
+    }
+
+
+
     private void Update()
     {
+        if (interactionPrompt != null) interactionPrompt.SetActive(false);
+        if (promptText != null) promptText.gameObject.SetActive(false);
+
         HandleHighlightAndPickup();
         if (inventory.GetCurrentItem() != null)
         {
-            if (Input.GetKeyDown(KeyCode.Q)) 
+            if (Input.GetKeyDown(KeyCode.Q) && !IsHoveringDish()) 
             {
                 DropObject();
             }
             HandlePlacement();
         }
         else ClearGhost();
+        
+        HandleDishRotation();
+    }
+
+    private bool IsHoveringDish()
+    {
+        if (Physics.Raycast(cam.position, cam.forward, out RaycastHit hit, pickupRange, interactableLayer))
+        {
+            AntennaController antenna = hit.collider.GetComponentInParent<AntennaController>();
+            if (antenna != null && hit.collider.gameObject == antenna.dishPart)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void HandleDishRotation()
+    {
+        if (Physics.Raycast(cam.position, cam.forward, out RaycastHit hit, pickupRange, interactableLayer))
+        {
+            AntennaController antenna = hit.collider.GetComponentInParent<AntennaController>();
+            if (antenna != null && hit.collider.gameObject == antenna.dishPart)
+            {
+                float dir = 0;
+                if (Input.GetKey(KeyCode.Q)) dir = -1;
+                if (Input.GetKey(KeyCode.E)) dir = 1;
+                
+                if (dir != 0)
+                {
+                    antenna.RotateDishManual(dir);
+                }
+            }
+        }
     }
 
     private void HandleHighlightAndPickup()
     {
+        if (interactionPrompt != null) interactionPrompt.SetActive(false);
+
         if (cam == null || isPlacing) 
         {
+            ClearOutline();
             return;
         }
 
         if (Physics.Raycast(cam.position, cam.forward, out RaycastHit hit, pickupRange, interactableLayer))
         {
             ItemSpawner spawner = hit.collider.GetComponentInParent<ItemSpawner>();
-            if (spawner != null)
-            {
-                UpdateOutline(spawner.gameObject);
-                if (Input.GetKeyDown(KeyCode.E) && inventory.GetEmptySlot() != -1 && spawner.itemPrefab != null)
-                {
-                    PickupObject(Instantiate(spawner.itemPrefab), inventory.GetEmptySlot(), null);
-                    ClearOutline();
-                }
-                return;
-            }
-
             ItemData data = hit.collider.GetComponentInParent<ItemData>();
-            if (data != null)
+
+            if (spawner != null || data != null)
             {
-                UpdateOutline(data.gameObject);
-                if (Input.GetKeyDown(KeyCode.E))
+                if (interactionPrompt != null) interactionPrompt.SetActive(true);
+                if (promptText != null) promptText.gameObject.SetActive(true);
+
+                if (spawner != null)
                 {
-                    if (data.isPlaced)
+                    UpdateOutline(spawner.gameObject);
+                    if (promptText != null) promptText.text = "E - Подобрать";
+                    if (Input.GetKeyDown(KeyCode.E) && inventory.GetEmptySlot() != -1 && spawner.itemPrefab != null)
                     {
-                        AntennaController antenna = data.GetComponentInChildren<AntennaController>();
-                        if (!data.isActivated)
-                        {
-                            data.ToggleActivation();
-                            data.placementAudioSource.Play();
-                        }
-                        else if (antenna != null)
-                        {
-                            antenna.OnInteract(hit.collider.gameObject);
-                        }
-                        else
-                        {
-                            data.ToggleActivation();
-                        }
-                    }
-                    else if (inventory.GetEmptySlot() != -1)
-                    {
-                        PickupObject(data.gameObject, inventory.GetEmptySlot(), data);
+                        PickupObject(Instantiate(spawner.itemPrefab), inventory.GetEmptySlot(), null);
                         ClearOutline();
                     }
                 }
-                return;
+                else if (data != null)
+                {
+                    UpdateOutline(hit.collider.gameObject);
+                    AntennaController antenna = data.GetComponentInChildren<AntennaController>();
+                    
+                    if (antenna != null && hit.collider.gameObject == antenna.dishPart)
+                    {
+                        if (promptText != null) promptText.text = "Q/E - Крутить";
+                    }
+                    else
+                    {
+                        if (promptText != null) promptText.text = "E - Взаимодействие";
+                    }
+
+                    if (Input.GetKeyDown(KeyCode.E))
+                    {
+                        if (data.isPlaced)
+                        {
+                            if (!data.isActivated) data.ToggleActivation();
+                            else if (antenna != null) antenna.OnInteract(hit.collider.gameObject);
+                            else data.ToggleActivation();
+                        }
+                        else if (inventory.GetEmptySlot() != -1)
+                        {
+                            PickupObject(data.gameObject, inventory.GetEmptySlot(), data);
+                            ClearOutline();
+                        }
+                    }
+                }
             }
+            else
+            {
+                ClearOutline();
+            }
+        }
+        else
+        {
             ClearOutline();
         }
-        else ClearOutline();
+    }
+
+    private void DisableAllOutlinesOnObject(GameObject obj)
+    {
+        if (obj == null) return;
+        foreach (var o in obj.GetComponentsInChildren<Outline>(true))
+        {
+            o.enabled = false;
+        }
     }
 
     private void UpdateOutline(GameObject obj)
@@ -174,6 +237,7 @@ public class ItemPickup : MonoBehaviour
             {
                 obj.GetComponent<Rigidbody>().isKinematic = false; 
             }
+            DisableAllOutlinesOnObject(obj);
             ClearGhost(); 
         }
     }
@@ -277,20 +341,20 @@ public class ItemPickup : MonoBehaviour
             {
                 progressImage.fillAmount = 0;
             }
-            //if (data.placementAudioSource != null) 
-            //{
-            //    data.placementAudioSource.Stop();
-            //}
+            if (data.placementAudioSource != null) 
+            {
+                data.placementAudioSource.Stop();
+            }
         }
     }
 
     private IEnumerator PlaceHoldRoutine(Vector3 pos, Quaternion rot, ItemData data)
     {
         isPlacing = true;
-        //if (data.placementAudioSource) 
-        //{
-        //    data.placementAudioSource.Play();
-        //}
+        if (data.placementAudioSource) 
+        {
+            data.placementAudioSource.Play();
+        }
 
         float timer = 0f;
         while (timer < placementDuration) 
@@ -306,7 +370,7 @@ public class ItemPickup : MonoBehaviour
         GameObject obj = inventory.RemoveCurrentItem();
         if (obj != null)
         {
-            obj.transform.position = pos;
+            obj.transform.position = pos; 
             obj.transform.rotation = rot;
             if (obj.GetComponent<Rigidbody>()) 
             {
@@ -317,6 +381,7 @@ public class ItemPickup : MonoBehaviour
             {
                 id.isPlaced = true;
             }
+            DisableAllOutlinesOnObject(obj);
         }
 
         if (progressImage != null)

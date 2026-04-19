@@ -26,6 +26,7 @@ public class AntennaController : MonoBehaviour
     private float tilt;
     private Quaternion startRot;
     private AntennaController targetAntenna;
+    private ItemData itemData;
 
     private void Start()
     {
@@ -45,22 +46,40 @@ public class AntennaController : MonoBehaviour
         {
             lineRenderer.enabled = false;
         }
+
+        itemData = GetComponentInParent<ItemData>();
     }
 
     public void OnInteract(GameObject hit)
     {
-        if (IsPartOf(hit, buttonPart) && !isPowered)
+        if (IsPartOf(hit, buttonPart))
         {
-            isPowered = true;
-            if (humSource)
+            if (!isPowered)
             {
-                humSource.Play();
+                isPowered = true;
+                if (humSource)
+                {
+                    humSource.Play();
+                }
+                if (baseRenderer && baseRenderer.materials.Length > 1)
+                {
+                    Material[] mats = baseRenderer.materials;
+                    mats[1] = bulbOnMaterial;
+                    baseRenderer.materials = mats;
+                }
             }
-            if (baseRenderer && baseRenderer.materials.Length > 1)
+            else
             {
-                Material[] mats = baseRenderer.materials;
-                mats[1] = bulbOnMaterial;
-                baseRenderer.materials = mats;
+                // Unpower and fold
+                isPowered = false;
+                if (humSource) humSource.Stop();
+                if (baseRenderer && baseRenderer.materials.Length > 1)
+                {
+                    Material[] mats = baseRenderer.materials;
+                    mats[1] = null; 
+                    baseRenderer.materials = mats;
+                }
+                if (itemData) itemData.ToggleActivation(); 
             }
         }
         else if (IsPartOf(hit, monitorPart) && isPowered && !isViewing)
@@ -117,7 +136,6 @@ public class AntennaController : MonoBehaviour
         if (antennaCamera != null)
         {
             antennaCamera.enabled = false;
-            antennaCamera.transform.localRotation = startRot;
         }
 
         if (mainCam)
@@ -172,7 +190,7 @@ public class AntennaController : MonoBehaviour
 
         if (lineRenderer && lineRenderer.enabled && targetAntenna != null && targetAntenna.lineTarget != null)
         {
-            DrawWire(linePoint.position, targetAntenna.lineTarget.position);
+            DrawSignalLine(linePoint.position, targetAntenna.lineTarget.position);
         }
     }
 
@@ -196,23 +214,23 @@ public class AntennaController : MonoBehaviour
                 lineRenderer.enabled = true;
                 lineRenderer.startWidth = 0.03f;
                 lineRenderer.endWidth = 0.03f;
-                DrawWire(linePoint.position, other.lineTarget.position);
+                DrawSignalLine(linePoint.position, other.lineTarget.position);
             }
         }
     }
 
-    private void DrawWire(Vector3 from, Vector3 to)
+    private void DrawSignalLine(Vector3 from, Vector3 to)
     {
-        int segments = 20;
-        float sag = Vector3.Distance(from, to) * 0.15f;
+        lineRenderer.positionCount = 2;
+        lineRenderer.SetPosition(0, from);
+        lineRenderer.SetPosition(1, to);
+    }
 
-        lineRenderer.positionCount = segments + 1;
-        for (int i = 0; i <= segments; i++)
+    public void RotateDishManual(float input)
+    {
+        if (dishPart)
         {
-            float t = (float)i / segments;
-            Vector3 point = Vector3.Lerp(from, to, t);
-            point.y -= sag * Mathf.Sin(t * Mathf.PI);
-            lineRenderer.SetPosition(i, point);
+            dishPart.transform.Rotate(Vector3.up, input * rotSpeed * Time.deltaTime, Space.World);
         }
     }
 }
