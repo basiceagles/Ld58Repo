@@ -170,7 +170,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemName: "\u0413\u0438\u0442\u043B\u0435\u0440"
   isPlaceable: 1
+<<<<<<< Updated upstream
   ghostPrefab: {fileID: 242615443780885100, guid: 2821255f599e197449670d7c175c97eb, type: 3}
+=======
+  ghostPrefab: {fileID: 3798587769616223982, guid: 5212d64ffa1ff6e45b483f21e5f88afd, type: 3}
+>>>>>>> Stashed changes
   invalidGhostPrefab: {fileID: 4760828457892996675, guid: 07a879f8765f3f74db82a44313ca92c4, type: 3}
   placementYOffset: 0
   placementAudioSource: {fileID: 0}
+  itemAnimator: {fileID: 0}
+  isPlaced: 0
