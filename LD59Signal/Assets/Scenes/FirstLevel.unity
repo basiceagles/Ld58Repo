@@ -38221,6 +38221,7 @@ GameObject:
   - component: {fileID: 1951495005}
   - component: {fileID: 1951495004}
   - component: {fileID: 1951495003}
+  - component: {fileID: 1951495007}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -38314,6 +38315,32 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &1951495007
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1951495002}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d5acfa084517a54da7bba00cb75da0d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _playerController: {fileID: 0}
+  _cameraController: {fileID: 0}
+  _targetWaveRenderer: {fileID: 0}
+  _playerWaveRenderer: {fileID: 0}
+  _screenRoot: {fileID: 0}
+  _progressSlider: {fileID: 0}
+  _progressText: {fileID: 0}
+  _matchScoreSlider: {fileID: 0}
+  _matchScoreText: {fileID: 0}
+  _fragmentRevealText: {fileID: 0}
+  _revealFadeDuration: 5
+  _phaseControlHintRoot: {fileID: 0}
+  _exitButton: {fileID: 0}
+  _holdProgressSlider: {fileID: 0}
 --- !u!1001 &1955939789
 PrefabInstance:
   m_ObjectHideFlags: 0
