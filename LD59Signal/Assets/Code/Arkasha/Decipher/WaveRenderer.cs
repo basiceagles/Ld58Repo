@@ -1,45 +1,65 @@
 using UnityEngine;
+using UnityEngine.UI;
 
-[RequireComponent(typeof(LineRenderer))]
-public class WaveRenderer : MonoBehaviour
+// Рисует волну прямо в UI через Graphic — работает с Overlay Canvas
+[RequireComponent(typeof(CanvasRenderer))]
+public class WaveRenderer : MaskableGraphic
 {
-    [SerializeField] private RectTransform _panelRect;
+    private float _amplitude;
+    private float _frequency;
+    private float _phase;
+    private float[] _noiseOffsets;
 
-    private LineRenderer _lineRenderer;
-    private readonly Vector3[] _points = new Vector3[OscilloscopeSimulator.SAMPLE_COUNT];
-
-    private void Awake()
-    {
-        _lineRenderer = GetComponent<LineRenderer>();
-        _lineRenderer.positionCount = OscilloscopeSimulator.SAMPLE_COUNT;
-        _lineRenderer.useWorldSpace = true;
-    }
-
-    // Обновляет позиции волны. Вызывать каждый кадр
     public void UpdateWave(float amplitude, float frequency, float phase, float[] noiseOffsets = null)
     {
-        if (_panelRect == null) return;
+        _amplitude   = amplitude;
+        _frequency   = frequency;
+        _phase       = phase;
+        _noiseOffsets = noiseOffsets;
 
-        // Получаем мировые координаты углов панели
-        // Порядок углов: [0]=BL, [1]=TL, [2]=TR, [3]=BR
-        Vector3[] corners = new Vector3[4];
-        _panelRect.GetWorldCorners(corners);
+        // Говорим Unity что нужно перерисовать
+        SetVerticesDirty();
+    }
 
-        Vector3 center   = (corners[0] + corners[2]) * 0.5f;
-        float halfWidth  = (corners[2].x - corners[0].x) * 0.5f;
-        float halfHeight = (corners[1].y - corners[0].y) * 0.5f;
+    protected override void OnPopulateMesh(VertexHelper vh)
+    {
+        vh.Clear();
 
-        // Чуть перед плоскостью Canvas чтобы волна не ушла за фон
-        float zDepth = corners[0].z - 0.01f;
+        Rect r         = rectTransform.rect;
+        float halfW    = r.width  * 0.5f;
+        float halfH    = r.height * 0.5f;
+        float lineWidth = 2f;
 
-        OscilloscopeSimulator.FillPoints(
-            amplitude, frequency, phase, noiseOffsets,
-            center.x, center.y,
-            halfWidth, halfHeight,
-            zDepth,
-            _points
-        );
+        for (int i = 0; i < OscilloscopeSimulator.SAMPLE_COUNT - 1; i++)
+        {
+            float x0 = (float)i       / OscilloscopeSimulator.SAMPLE_COUNT;
+            float x1 = (float)(i + 1) / OscilloscopeSimulator.SAMPLE_COUNT;
 
-        _lineRenderer.SetPositions(_points);
+            float y0 = OscilloscopeSimulator.ComputeWave(_amplitude, _frequency, _phase, x0);
+            float y1 = OscilloscopeSimulator.ComputeWave(_amplitude, _frequency, _phase, x1);
+
+            if (_noiseOffsets != null)
+            {
+                if (i     < _noiseOffsets.Length) y0 += _noiseOffsets[i];
+                if (i + 1 < _noiseOffsets.Length) y1 += _noiseOffsets[i + 1];
+            }
+
+            Vector2 p0 = new Vector2(Mathf.Lerp(-halfW, halfW, x0), y0 * halfH);
+            Vector2 p1 = new Vector2(Mathf.Lerp(-halfW, halfW, x1), y1 * halfH);
+
+            // Вектор перпендикуляра для толщины линии
+            Vector2 dir    = (p1 - p0).normalized;
+            Vector2 normal = new Vector2(-dir.y, dir.x) * lineWidth * 0.5f;
+
+            int idx = vh.currentVertCount;
+
+            vh.AddVert(p0 - normal, color, Vector2.zero);
+            vh.AddVert(p0 + normal, color, Vector2.zero);
+            vh.AddVert(p1 + normal, color, Vector2.zero);
+            vh.AddVert(p1 - normal, color, Vector2.zero);
+
+            vh.AddTriangle(idx,     idx + 1, idx + 2);
+            vh.AddTriangle(idx,     idx + 2, idx + 3);
+        }
     }
 }

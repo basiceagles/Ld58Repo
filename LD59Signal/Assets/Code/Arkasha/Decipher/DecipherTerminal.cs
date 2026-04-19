@@ -37,31 +37,54 @@ public class DecipherTerminal : MonoBehaviour
             _interactPrompt.SetActive(false);
     }
 
-    private void Update()
+   private void Update()
+{
+    if (_isOpen || _playerTransform == null) return;
+
+    bool inRange = IsPlayerInRange();
+    bool allDone = FragmentsDeciphered >= TotalFragments;
+
+    if (_interactPrompt != null)
+        _interactPrompt.SetActive(inRange && !allDone);
+
+    if (inRange && !allDone)
     {
-        if (_isOpen || _playerTransform == null) return;
-
-        bool inRange = IsPlayerInRange();
-        bool allDone = FragmentsDeciphered >= TotalFragments;
-
-        if (_interactPrompt != null)
-            _interactPrompt.SetActive(inRange && !allDone);
-
-        if (inRange && !allDone && Input.GetKeyDown(KeyCode.E))
+        // Показываем дистанцию до терминала каждые ~секунду через лог
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            Debug.Log($"[DecipherTerminal] E нажата, inRange={inRange}, allDone={allDone}, фрагментов={FragmentsDeciphered}/{TotalFragments}");
             TryEnter();
+        }
     }
+}
 
-    public void TryEnter()
+   public void TryEnter()
+{
+    if (_isOpen)
     {
-        if (_isOpen || _decipherScreen == null || FragmentsDeciphered >= TotalFragments) return;
-
-        _isOpen = true;
-
-        if (_interactPrompt != null)
-            _interactPrompt.SetActive(false);
-
-        _decipherScreen.Open(this, _fragments[FragmentsDeciphered]);
+        Debug.Log("[DecipherTerminal] TryEnter — экран уже открыт");
+        return;
     }
+    if (_decipherScreen == null)
+    {
+        Debug.LogError("[DecipherTerminal] TryEnter — DecipherScreen не назначен!");
+        return;
+    }
+    if (FragmentsDeciphered >= TotalFragments)
+    {
+        Debug.Log("[DecipherTerminal] TryEnter — все фрагменты уже расшифрованы");
+        return;
+    }
+
+    Debug.Log($"[DecipherTerminal] Открываем экран, фрагмент {FragmentsDeciphered + 1}");
+
+    _isOpen = true;
+
+    if (_interactPrompt != null)
+        _interactPrompt.SetActive(false);
+
+    _decipherScreen.Open(this, _fragments[FragmentsDeciphered]);
+}
 
     // Вызывается экраном когда игрок нажал выход
     public void NotifyExit()

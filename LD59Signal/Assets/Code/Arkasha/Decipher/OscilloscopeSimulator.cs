@@ -3,7 +3,7 @@ using UnityEngine;
 public static class OscilloscopeSimulator
 {
     public const int SAMPLE_COUNT = 256;
-    private const float MATCH_TOLERANCE = 0.3f;
+    private const float MATCH_TOLERANCE = 0.8f;
 
     // Вычисляет Y точки синусоиды в позиции x (0..1)
     public static float ComputeWave(float amplitude, float frequency, float phase, float x)

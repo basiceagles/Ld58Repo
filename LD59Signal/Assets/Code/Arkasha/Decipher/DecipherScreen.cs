@@ -7,7 +7,7 @@ using SmallHedge.SoundManager;
 
 public class DecipherScreen : MonoBehaviour
 {
-    private const float MATCH_THRESHOLD  = 0.92f; // порог совпадения для успеха
+    private const float MATCH_THRESHOLD  = 0.90f; // порог совпадения для успеха
     private const float MATCH_HOLD_TIME  = 3f;    // сколько секунд держать порог
     private const int   NOISE_POINT_COUNT = 20;   // сколько точек получают шум за раз
     private const float PLAYER_START_MULT = 0.5f; // стартовые параметры игрока = 50% от цели
@@ -30,6 +30,7 @@ public class DecipherScreen : MonoBehaviour
     [SerializeField] private float      _revealFadeDuration = 1f;
     [SerializeField] private GameObject _phaseControlHintRoot;
     [SerializeField] private Button     _exitButton;
+    [SerializeField] private Slider _holdProgressSlider;
 
     private DecipherTerminal       _terminal;
     private DecipherFragmentConfig _currentConfig;
@@ -51,13 +52,18 @@ public class DecipherScreen : MonoBehaviour
     private readonly WaitForSeconds _waitSuccessDelay = new WaitForSeconds(2.5f);
 
     private void Awake()
-    {
-        if (_screenRoot != null)
-            _screenRoot.SetActive(false);
+{
+    if (_screenRoot != null)
+        _screenRoot.SetActive(false);
 
-        if (_exitButton != null)
-            _exitButton.onClick.AddListener(RequestExit);
-    }
+    if (_exitButton != null)
+        _exitButton.onClick.AddListener(RequestExit);
+
+    // Проверяем все ссылки при старте
+    Debug.Log($"[DecipherScreen] Awake. screenRoot={_screenRoot}, targetWave={_targetWaveRenderer}, playerWave={_playerWaveRenderer}");
+    Debug.Log($"[DecipherScreen] progressSlider={_progressSlider}, matchSlider={_matchScoreSlider}");
+    Debug.Log($"[DecipherScreen] playerController={_playerController}, cameraController={_cameraController}");
+}
 
     private void OnDestroy()
     {
@@ -85,56 +91,62 @@ public class DecipherScreen : MonoBehaviour
         EvaluateMatchScore();
     }
 
-    public void Open(DecipherTerminal terminal, DecipherFragmentConfig config)
-    {
-        if (_isOpen) return;
+   public void Open(DecipherTerminal terminal, DecipherFragmentConfig config)
+{
+    if (_isOpen) return;
 
-        _terminal = terminal;
+    Debug.Log("[DecipherScreen] Open вызван");
 
-        if (_playerController != null) _playerController.enabled = false;
-        if (_cameraController != null) _cameraController.enabled = false;
+    _terminal = terminal;
 
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible   = true;
+    if (_playerController != null) _playerController.enabled = false;
+    if (_cameraController != null) _cameraController.enabled = false;
 
-        if (_screenRoot != null) _screenRoot.SetActive(true);
+    Cursor.lockState = CursorLockMode.None;
+    Cursor.visible   = true;
 
-        _isOpen = true;
+    if (_screenRoot != null) _screenRoot.SetActive(true);
 
-        LoadFragment(config);
-        UpdateProgressUI();
-    }
+    _isOpen = true;
+
+    LoadFragment(config);
+    UpdateProgressUI();
+
+    Debug.Log("[DecipherScreen] Open завершён, screenRoot активен");
+}
 
     public void LoadFragment(DecipherFragmentConfig config)
+{
+    _currentConfig = config;
+
+    _playerAmplitude = _currentConfig.targetAmplitude * PLAYER_START_MULT;
+    _playerFrequency = _currentConfig.targetFrequency * PLAYER_START_MULT;
+    _playerPhase     = 0f;
+
+    _matchTimer     = 0f;
+    _noiseTimer     = 0f;
+    _inversionTimer = 0f;
+
+    Array.Clear(_noiseOffsets, 0, _noiseOffsets.Length);
+
+    if (_phaseControlHintRoot != null)
+        _phaseControlHintRoot.SetActive(_currentConfig.hasPhaseControl);
+
+    if (_fragmentRevealText != null)
     {
-        // Работаем с копией структуры — оригинал в терминале не меняется
-        _currentConfig = config;
-
-        _playerAmplitude = _currentConfig.targetAmplitude * PLAYER_START_MULT;
-        _playerFrequency = _currentConfig.targetFrequency * PLAYER_START_MULT;
-        _playerPhase     = 0f;
-
-        _matchTimer     = 0f;
-        _noiseTimer     = 0f;
-        _inversionTimer = 0f;
-
-        Array.Clear(_noiseOffsets, 0, _noiseOffsets.Length);
-
-        if (_phaseControlHintRoot != null)
-            _phaseControlHintRoot.SetActive(_currentConfig.hasPhaseControl);
-
-        if (_fragmentRevealText != null)
-        {
-            _fragmentRevealText.text = string.Empty;
-            _fragmentRevealText.gameObject.SetActive(false);
-        }
-
-        if (_revealRoutine != null)
-        {
-            StopCoroutine(_revealRoutine);
-            _revealRoutine = null;
-        }
+        _fragmentRevealText.text = string.Empty;
+        _fragmentRevealText.gameObject.SetActive(false);
     }
+
+    if (_revealRoutine != null)
+    {
+        StopCoroutine(_revealRoutine);
+        _revealRoutine = null;
+    }
+
+    Debug.Log($"[DecipherScreen] LoadFragment. targetAmp={_currentConfig.targetAmplitude}, targetFreq={_currentConfig.targetFrequency}, targetPhase={_currentConfig.targetPhase}");
+    Debug.Log($"[DecipherScreen] Игрок стартует с amp={_playerAmplitude}, freq={_playerFrequency}");
+}
 
     private void HandleWaveInput()
     {
@@ -193,47 +205,63 @@ public class DecipherScreen : MonoBehaviour
         _currentConfig.targetAmplitude *= -1f;
     }
 
-    private void UpdateWaveRenderers()
-    {
-        _targetWaveRenderer?.UpdateWave(
-            _currentConfig.targetAmplitude,
-            _currentConfig.targetFrequency,
-            _currentConfig.targetPhase,
-            _noiseOffsets);
+   private void UpdateWaveRenderers()
+{
+    if (_targetWaveRenderer == null)
+        Debug.LogWarning("[DecipherScreen] targetWaveRenderer == null — волна цели не рендерится!");
 
-        _playerWaveRenderer?.UpdateWave(
-            _playerAmplitude,
-            _playerFrequency,
-            _playerPhase);
-    }
+    if (_playerWaveRenderer == null)
+        Debug.LogWarning("[DecipherScreen] playerWaveRenderer == null — волна игрока не рендерится!");
+
+    _targetWaveRenderer?.UpdateWave(
+        _currentConfig.targetAmplitude,
+        _currentConfig.targetFrequency,
+        _currentConfig.targetPhase,
+        _noiseOffsets);
+
+    _playerWaveRenderer?.UpdateWave(
+        _playerAmplitude,
+        _playerFrequency,
+        _playerPhase);
+}
 
     private void EvaluateMatchScore()
+{
+    float score = OscilloscopeSimulator.ComputeMatchScore(
+        _currentConfig.targetAmplitude,
+        _currentConfig.targetFrequency,
+        _currentConfig.targetPhase,
+        _noiseOffsets,
+        _playerAmplitude,
+        _playerFrequency,
+        _playerPhase);
+
+    if (_matchScoreSlider != null)
+        _matchScoreSlider.value = Mathf.Lerp(_matchScoreSlider.value, score, Time.deltaTime * 8f);
+    if (_matchScoreText != null)
+        _matchScoreText.text = $"{Mathf.RoundToInt(score * 100f)}%";
+
+    if (_holdProgressSlider != null)
     {
-        float score = OscilloscopeSimulator.ComputeMatchScore(
-            _currentConfig.targetAmplitude,
-            _currentConfig.targetFrequency,
-            _currentConfig.targetPhase,
-            _noiseOffsets,
-            _playerAmplitude,
-            _playerFrequency,
-            _playerPhase);
-
-        if (_matchScoreSlider != null) _matchScoreSlider.value = score;
-        if (_matchScoreText   != null) _matchScoreText.text   = $"{Mathf.RoundToInt(score * 100f)}%";
-
-        if (score >= MATCH_THRESHOLD)
-        {
-            _matchTimer += Time.deltaTime;
-
-            if (_matchTimer >= MATCH_HOLD_TIME && _successRoutine == null)
-                _successRoutine = StartCoroutine(SuccessRoutine());
-        }
+        if (score >= MATCH_THRESHOLD && _matchTimer > 0f)
+            _holdProgressSlider.value = Mathf.Lerp(_holdProgressSlider.value, _matchTimer / MATCH_HOLD_TIME, Time.deltaTime * 8f);
         else
-        {
-            // Не удержал порог — таймер сбрасывается
-            _matchTimer = 0f;
-        }
+            _holdProgressSlider.value = Mathf.Lerp(_holdProgressSlider.value, 0f, Time.deltaTime * 8f);
     }
+
+    if (score >= MATCH_THRESHOLD)
+    {
+        _matchTimer += Time.deltaTime;
+        Debug.Log($"[DecipherScreen] Порог удерживается: {_matchTimer:F1} / {MATCH_HOLD_TIME} сек, score={score:F2}");
+
+        if (_matchTimer >= MATCH_HOLD_TIME && _successRoutine == null)
+            _successRoutine = StartCoroutine(SuccessRoutine());
+    }
+    else
+    {
+        _matchTimer = 0f;
+    }
+}
 
     private IEnumerator SuccessRoutine()
     {
