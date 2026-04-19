@@ -94,6 +94,7 @@ public class ItemPickup : MonoBehaviour
                         if (!data.isActivated)
                         {
                             data.ToggleActivation();
+                            data.placementAudioSource.Play();
                         }
                         else if (antenna != null)
                         {
@@ -268,20 +269,20 @@ public class ItemPickup : MonoBehaviour
             {
                 progressImage.fillAmount = 0;
             }
-            if (data.placementAudioSource != null) 
-            {
-                data.placementAudioSource.Stop();
-            }
+            //if (data.placementAudioSource != null) 
+            //{
+            //    data.placementAudioSource.Stop();
+            //}
         }
     }
 
     private IEnumerator PlaceHoldRoutine(Vector3 pos, Quaternion rot, ItemData data)
     {
         isPlacing = true;
-        if (data.placementAudioSource) 
-        {
-            data.placementAudioSource.Play();
-        }
+        //if (data.placementAudioSource) 
+        //{
+        //    data.placementAudioSource.Play();
+        //}
 
         float timer = 0f;
         while (timer < placementDuration) 
