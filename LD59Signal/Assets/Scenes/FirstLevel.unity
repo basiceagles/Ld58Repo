@@ -46401,11 +46401,11 @@ MonoBehaviour:
     phaseAdjustSpeed: 0.4
     hasPhaseControl: 1
     hasDrift: 0
-    driftSpeed: 0.2
-    noiseStrength: 0
-    noiseInterval: 2
+    driftSpeed: 0.06
+    noiseStrength: 0.5
+    noiseInterval: 0.39
     hasInversion: 0
-    inversionInterval: 5
+    inversionInterval: 1
     revealedText: "\u0422\u042B \u0425\u0410\u0420\u041E\u0428"
 --- !u!1001 &1321598917614318038
 PrefabInstance:

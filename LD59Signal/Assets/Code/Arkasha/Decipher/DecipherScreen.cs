@@ -31,6 +31,7 @@ public class DecipherScreen : MonoBehaviour
     [SerializeField] private GameObject _phaseControlHintRoot;
     [SerializeField] private Button     _exitButton;
     [SerializeField] private Slider _holdProgressSlider;
+    
 
     private DecipherTerminal       _terminal;
     private DecipherFragmentConfig _currentConfig;
@@ -38,6 +39,7 @@ public class DecipherScreen : MonoBehaviour
     private float _playerAmplitude;
     private float _playerFrequency;
     private float _playerPhase;
+    private float _holdProgressVisual;
 
     private float   _matchTimer;
     private float   _noiseTimer;
@@ -242,25 +244,31 @@ public class DecipherScreen : MonoBehaviour
         _matchScoreText.text = $"{Mathf.RoundToInt(score * 100f)}%";
 
     if (_holdProgressSlider != null)
-    {
-        if (score >= MATCH_THRESHOLD && _matchTimer > 0f)
-            _holdProgressSlider.value = Mathf.Lerp(_holdProgressSlider.value, _matchTimer / MATCH_HOLD_TIME, Time.deltaTime * 8f);
-        else
-            _holdProgressSlider.value = Mathf.Lerp(_holdProgressSlider.value, 0f, Time.deltaTime * 8f);
-    }
+{
+    float logicValue = _matchTimer / MATCH_HOLD_TIME;
 
     if (score >= MATCH_THRESHOLD)
-    {
-        _matchTimer += Time.deltaTime;
-        Debug.Log($"[DecipherScreen] Порог удерживается: {_matchTimer:F1} / {MATCH_HOLD_TIME} сек, score={score:F2}");
-
-        if (_matchTimer >= MATCH_HOLD_TIME && _successRoutine == null)
-            _successRoutine = StartCoroutine(SuccessRoutine());
-    }
+        _holdProgressVisual = Mathf.Lerp(_holdProgressVisual, logicValue, Time.deltaTime * 8f);
     else
-    {
-        _matchTimer = 0f;
-    }
+        _holdProgressVisual = Mathf.Lerp(_holdProgressVisual, logicValue, Time.deltaTime * 0.3f);
+
+    _holdProgressSlider.value = _holdProgressVisual;
+}
+
+   if (score >= MATCH_THRESHOLD)
+{
+    // Порог достигнут — таймер растёт
+    _matchTimer += Time.deltaTime;
+
+    if (_matchTimer >= MATCH_HOLD_TIME && _successRoutine == null)
+        _successRoutine = StartCoroutine(SuccessRoutine());
+}
+else
+{
+    // Порог потерян — таймер медленно убывает, но не сбрасывается в ноль резко
+    _matchTimer -= Time.deltaTime * 0.3f;
+    _matchTimer  = Mathf.Max(_matchTimer, 0f);
+}
 }
 
     private IEnumerator SuccessRoutine()
