@@ -1376,7 +1376,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   loadScene: 1
   restartScene: 0
-  sceneName: FirstLevel
+  sceneName: TutorialLevel
   saveMoneyOnRestart: 0
 --- !u!1 &832575517
 GameObject:
@@ -4693,6 +4693,7 @@ MonoBehaviour:
   smokeEffect: {fileID: 0}
   ashPrefab: {fileID: 0}
   brokenOutlineColor: {r: 1, g: 0, b: 0, a: 1}
+  isStartingAntenna: 0
 --- !u!4 &4828738433572864143
 Transform:
   m_ObjectHideFlags: 0
