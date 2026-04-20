@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3646789602636821256}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: GameObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -48,7 +48,7 @@ GameObject:
   - component: {fileID: 3862843860715892094}
   - component: {fileID: 1647152324986666900}
   - component: {fileID: 5175130049424637109}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -137,7 +137,7 @@ CapsuleCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 4096
+    m_Bits: 36864
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
@@ -157,7 +157,7 @@ CharacterController:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 25591
   m_ExcludeLayers:
     serializedVersion: 2
     m_Bits: 4096
@@ -223,7 +223,7 @@ MonoBehaviour:
     m_Bits: 8192
   wrenchLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 32768
   exclusionLayer:
     serializedVersion: 2
     m_Bits: 4096
@@ -288,7 +288,7 @@ GameObject:
   - component: {fileID: 2747804553340676861}
   - component: {fileID: 4446201441147674429}
   - component: {fileID: 6705623724842160145}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Main Camera
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
@@ -455,7 +455,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2893302657593948030}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: GameObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
