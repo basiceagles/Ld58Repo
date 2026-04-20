@@ -47976,6 +47976,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1204844804}
     - target: {fileID: 3862843860715892094, guid: 71bd443386866214ab3bd3566f78e053, type: 3}
+      propertyPath: promptText
+      value: 
+      objectReference: {fileID: 231123475}
+    - target: {fileID: 3862843860715892094, guid: 71bd443386866214ab3bd3566f78e053, type: 3}
       propertyPath: progressImage
       value: 
       objectReference: {fileID: 201787419}

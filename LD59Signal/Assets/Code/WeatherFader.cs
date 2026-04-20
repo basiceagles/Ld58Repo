@@ -106,9 +106,17 @@ public sealed class WeatherFader : MonoBehaviour
         FadeToBasic();
     }
 
-    public void FadeToBasic() => FadeTo(WeatherType.Basic, _defaultFadeTimeSeconds);
+    public void FadeToBasic()
+    {
+        FadeTo(WeatherType.Basic, _defaultFadeTimeSeconds);
+        StartCoroutine(CrossfadeAmbient(_basicAmbientClip, _audioFadeTimeSeconds));
+    }
 
-    public void FadeToFoggy() => FadeTo(WeatherType.Foggy, _defaultFadeTimeSeconds);
+    public void FadeToFoggy()
+    {
+        FadeTo(WeatherType.Foggy, _defaultFadeTimeSeconds);
+        StartCoroutine(CrossfadeAmbient(_foggyAmbientClip, _audioFadeTimeSeconds));
+    }
 
     public void FadeToBasic(float fadeTimeSeconds) => FadeTo(WeatherType.Basic, fadeTimeSeconds);
 

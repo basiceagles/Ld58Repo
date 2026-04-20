@@ -77,7 +77,7 @@ public class AntennaController : MonoBehaviour
 
     public void OnInteract(GameObject hit)
     {
-        if (isBroken || isDestroyed) return;
+        if (skipE || isBroken || isDestroyed) return;
 
         if (IsPartOf(hit, buttonPart))
         {
@@ -166,6 +166,7 @@ public class AntennaController : MonoBehaviour
     private void ExitView()
     {
         isViewing = false;
+        skipE = true;
 
         if (antennaCamera != null)
         {
@@ -191,6 +192,15 @@ public class AntennaController : MonoBehaviour
 
     private void Update()
     {
+        if (skipE)
+        {
+            if (Input.GetKeyUp(KeyCode.E))
+            {
+                skipE = false;
+            }
+            return;
+        }
+
         if (isSignalEstablished && lineRenderer != null)
         {
             if (targetAntenna == null)
