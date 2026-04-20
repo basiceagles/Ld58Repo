@@ -8,8 +8,8 @@ OcclusionCullingSettings:
     smallestOccluder: 5
     smallestHole: 0.25
     backfaceThreshold: 100
-  m_SceneGUID: 00000000000000000000000000000000
-  m_OcclusionCullingData: {fileID: 0}
+  m_SceneGUID: 2f52db26724c6e54eaaae25552ca720b
+  m_OcclusionCullingData: {fileID: 36300000, guid: 6b75a1f5971670147bdccdac310f76a4, type: 2}
 --- !u!104 &2
 RenderSettings:
   m_ObjectHideFlags: 0
@@ -401,7 +401,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: Resolutions
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 6396789449339720979, guid: 72f15a7b9c8ccc948807d0219d3ccc25, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -535,7 +536,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 2147483647
   m_IsActive: 1
 --- !u!4 &262185372
 Transform:
@@ -1345,6 +1346,7 @@ PrefabInstance:
     - {fileID: 2741017937399254062, guid: 73cd60f9d62676a4a8f2b27852920171, type: 3}
     - {fileID: 4870774557822366001, guid: 73cd60f9d62676a4a8f2b27852920171, type: 3}
     - {fileID: 8761607392164120709, guid: 73cd60f9d62676a4a8f2b27852920171, type: 3}
+    - {fileID: 1876715417111068756, guid: 73cd60f9d62676a4a8f2b27852920171, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
@@ -1852,6 +1854,7 @@ PrefabInstance:
     - {fileID: 2741017937399254062, guid: 73cd60f9d62676a4a8f2b27852920171, type: 3}
     - {fileID: 4870774557822366001, guid: 73cd60f9d62676a4a8f2b27852920171, type: 3}
     - {fileID: 8761607392164120709, guid: 73cd60f9d62676a4a8f2b27852920171, type: 3}
+    - {fileID: 1876715417111068756, guid: 73cd60f9d62676a4a8f2b27852920171, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
@@ -2607,7 +2610,8 @@ PrefabInstance:
       propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 6568710514438148560, guid: d3d40fadb53ca0e4eafad05e354b776f, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -2831,6 +2835,7 @@ PrefabInstance:
     - {fileID: 2741017937399254062, guid: 73cd60f9d62676a4a8f2b27852920171, type: 3}
     - {fileID: 4870774557822366001, guid: 73cd60f9d62676a4a8f2b27852920171, type: 3}
     - {fileID: 8761607392164120709, guid: 73cd60f9d62676a4a8f2b27852920171, type: 3}
+    - {fileID: 1876715417111068756, guid: 73cd60f9d62676a4a8f2b27852920171, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
@@ -3022,7 +3027,8 @@ PrefabInstance:
       propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 6568710514438148560, guid: d3d40fadb53ca0e4eafad05e354b776f, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -3757,7 +3763,8 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 5540224813711507812, guid: 34b07546d99eb2b43a43ebc8eb369eb8, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -3932,7 +3939,8 @@ PrefabInstance:
       propertyPath: m_OnValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 6568710514438148560, guid: d3d40fadb53ca0e4eafad05e354b776f, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -4694,6 +4702,7 @@ MonoBehaviour:
   ashPrefab: {fileID: 0}
   brokenOutlineColor: {r: 1, g: 0, b: 0, a: 1}
   isStartingAntenna: 0
+  isReceivingSignal: 0
 --- !u!4 &4828738433572864143
 Transform:
   m_ObjectHideFlags: 0

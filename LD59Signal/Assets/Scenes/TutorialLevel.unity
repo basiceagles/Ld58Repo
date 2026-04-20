@@ -8,8 +8,8 @@ OcclusionCullingSettings:
     smallestOccluder: 5
     smallestHole: 0.25
     backfaceThreshold: 100
-  m_SceneGUID: 00000000000000000000000000000000
-  m_OcclusionCullingData: {fileID: 0}
+  m_SceneGUID: ee718a9b41d270d4f93aeaa38d0cdc0f
+  m_OcclusionCullingData: {fileID: 36300000, guid: 77f7289dab1cd754d9afd4bc4f37cd5d, type: 2}
 --- !u!104 &2
 RenderSettings:
   m_ObjectHideFlags: 0
@@ -4061,7 +4061,7 @@ GameObject:
   - component: {fileID: 349854074}
   - component: {fileID: 349854073}
   - component: {fileID: 349854072}
-  m_Layer: 12
+  m_Layer: 13
   m_Name: BtnPrev
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4906,7 +4906,7 @@ MonoBehaviour:
   _interactRange: 3
   _interactLayer:
     serializedVersion: 2
-    m_Bits: 4096
+    m_Bits: 8192
   _hintNext: {fileID: 871617174}
   _hintPrev: {fileID: 1037042343}
 --- !u!43 &457982242
@@ -17018,7 +17018,7 @@ GameObject:
   - component: {fileID: 1974358155}
   - component: {fileID: 1974358154}
   - component: {fileID: 1974358153}
-  m_Layer: 12
+  m_Layer: 13
   m_Name: BtnNext
   m_TagString: Untagged
   m_Icon: {fileID: 0}

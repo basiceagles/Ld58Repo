@@ -286,7 +286,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 31605a63c23538c4b83abf01a0a117b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  sceneName: MainMenu
+  sceneName: EndDialogue
   lineTarget: {fileID: 8299024660807481113}
 --- !u!1 &7800385745144771581
 GameObject:

@@ -14,6 +14,11 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/TutorialLevel.unity
     guid: ee718a9b41d270d4f93aeaa38d0cdc0f
+  - enabled: 1
+    path: Assets/Scenes/EndDialogue.unity
+    guid: b6cb9320f502be343a5121332fe9c5f1
   m_configObjects:
+    com.unity.addressableassets: {fileID: 11400000, guid: b4cd7b776d6477143bc05394c276e9d0, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+    com.unity.localization.settings: {fileID: 11400000, guid: 7925a303cd5a85d46a595ed0613419dc, type: 2}
   m_UseUCBPForAssetBundles: 0
