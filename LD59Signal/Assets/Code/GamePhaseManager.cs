@@ -150,51 +150,71 @@ public class GamePhaseManager : MonoBehaviour
 
     private void CheckSignalChain()
     {
-        AntennaController current = null;
-        foreach (var a in FindObjectsOfType<AntennaController>())
+        AntennaController[] allAntennas = FindObjectsOfType<AntennaController>();
+        
+        foreach (var a in allAntennas)
         {
-            if (a.isStartingAntenna)
+            if (a != null && !a.isStartingAntenna) a.SetReceivingSignal(false);
+        }
+        List<AntennaController> starts = new List<AntennaController>();
+        foreach (var a in allAntennas)
+        {
+            if (a != null && a.isStartingAntenna)
             {
-                current = a;
-                break;
+                starts.Add(a);
             }
         }
 
-        if (current == null)
+        if (starts.Count == 0)
         {
             return;
         }
 
         HashSet<AntennaController> visited = new HashSet<AntennaController>();
-        while (current != null)
+        bool winFound = false;
+
+        foreach (var start in starts)
         {
-            if (visited.Contains(current)) 
+            AntennaController current = start;
+            while (current != null)
             {
-                break;
-            }
-            visited.Add(current);
-
-            if (!current.IsPowered || current.IsBroken || current.IsDestroyed) 
-            {
-                break;
-            }
-            AntennaController next = current.GetTargetAntenna();
-            SignalGoal goal = current.GetTargetGoal();
-
-            if (goal != null)
-            {
-                if (!goalReached)
+                if (visited.Contains(current))
                 {
-                    goal.OnSignalReached();
-                    goalReached = true;
+                    break;
                 }
-                return;
-            }
+                visited.Add(current);
 
-            current = next;
+                if (!current.IsPowered || current.IsBroken || current.IsDestroyed)
+                {
+                    break;
+                }
+
+                AntennaController next = current.GetTargetAntenna();
+                SignalGoal goal = current.GetTargetGoal();
+
+                if (goal != null)
+                {
+                    winFound = true;
+                    if (!goalReached)
+                    {
+                        goalReached = true;
+                        goal.OnSignalReached();
+                    }
+                }
+
+                if (next != null)
+                {
+                    next.SetReceivingSignal(true);
+                    current = next;
+                }
+                else
+                {
+                    break;
+                }
+            }
         }
 
-        goalReached = false;
+        if (!winFound) goalReached = false;
     }
 
     private int GetMaxBreaksLimit(int stormIdx)

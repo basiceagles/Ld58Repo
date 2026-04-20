@@ -27,7 +27,7 @@ public class AntennaController : MonoBehaviour
     private bool isViewing;
     private bool skipE;
     private bool signalConfirmed;
-    private bool isReceivingSignal;
+    public bool isReceivingSignal;
     public bool IsLocked => signalConfirmed || isReceivingSignal;
     public bool IsSignalConfirmed => signalConfirmed;
     private Camera mainCam;
@@ -71,10 +71,15 @@ public class AntennaController : MonoBehaviour
 
             if (isStartingAntenna)
             {
-                if (itemData) itemData.ToggleActivation();
-                if (humSource) humSource.Play();
+                if (itemData)
+                {
+                    itemData.ToggleActivation();
+                }
+                if (humSource)
+                {
+                    humSource.Play();
+                }
                 
-                // Также меняем материал лампочки сразу
                 if (baseRenderer && baseRenderer.materials.Length > 1)
                 {
                     Material[] mats = baseRenderer.materials;
@@ -240,21 +245,21 @@ public class AntennaController : MonoBehaviour
             }
             else
             {
-                bool canShowLine = isPowered && !isBroken && !isDestroyed;
-                if (targetAntenna != null)
-                {
-                    canShowLine &= targetAntenna.IsPowered && !targetAntenna.IsBroken && !targetAntenna.IsDestroyed;
-                }
-                
-                lineRenderer.enabled = canShowLine;
-                if (canShowLine)
+                bool hasSignal = isStartingAntenna || isReceivingSignal;
+                bool canPropagate = hasSignal && isPowered && !isBroken && !isDestroyed;
+
+                lineRenderer.enabled = canPropagate;
+                if (canPropagate)
                 {
                     Vector3 targetPos = targetAntenna != null ? targetAntenna.lineTarget.position : targetGoal.lineTarget.position;
                     DrawSignalLine(linePoint.position, targetPos);
+                    
+                    if (targetAntenna != null) targetAntenna.SetReceivingSignal(true);
                 }
                 else
                 {
-                    lineRenderer.positionCount = 0; 
+                    lineRenderer.positionCount = 0;
+                    if (targetAntenna != null) targetAntenna.SetReceivingSignal(false);
                 }
             }
         }

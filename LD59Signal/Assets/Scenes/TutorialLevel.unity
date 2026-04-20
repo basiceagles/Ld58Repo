@@ -17128,7 +17128,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6866131299237513569, guid: 54649fa38419b7e4fbd0c519c59eb1b3, type: 3}
       propertyPath: m_text
-      value: ESC - Main Menu
+      value: Hold ESC - Main Menu
       objectReference: {fileID: 0}
     - target: {fileID: 9128644756289425944, guid: 54649fa38419b7e4fbd0c519c59eb1b3, type: 3}
       propertyPath: m_Pivot.x

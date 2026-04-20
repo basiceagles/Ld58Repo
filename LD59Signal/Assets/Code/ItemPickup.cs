@@ -32,6 +32,7 @@ public class ItemPickup : MonoBehaviour
     private bool isRepairing;
     private Coroutine repairRoutine;
     private float repairTimer;
+    private AntennaController currentRepairAntenna;
 
     private void Awake()
     {
@@ -55,15 +56,24 @@ public class ItemPickup : MonoBehaviour
         }
         if (interactionPrompt != null) interactionPrompt.SetActive(false);
 
-        foreach (var o in FindObjectsOfType<Outline>(true)) o.enabled = false;
+        foreach (var o in FindObjectsOfType<Outline>(true)) 
+        {
+            o.enabled = false;
+        }
     }
 
 
 
     private void Update()
     {
-        if (interactionPrompt != null) interactionPrompt.SetActive(false);
-        if (promptText != null) promptText.gameObject.SetActive(false);
+        if (interactionPrompt != null) 
+        {
+            interactionPrompt.SetActive(false);
+        }
+        if (promptText != null) 
+        {
+            promptText.gameObject.SetActive(false);
+        }
 
         HandleHighlightAndPickup();
         if (inventory.GetCurrentItem() != null)
@@ -84,7 +94,6 @@ public class ItemPickup : MonoBehaviour
     {
         if (isPlacing) return;
 
-        // Проверяем оба слоя: и интерактивный, и ключ
         LayerMask combinedMask = interactableLayer | wrenchLayer;
         if (Physics.Raycast(cam.position, cam.forward, out RaycastHit hit, pickupRange, combinedMask))
         {
@@ -103,24 +112,24 @@ public class ItemPickup : MonoBehaviour
                 {
                     isRepairing = true;
                     repairTimer = 0;
+                    currentRepairAntenna = antenna;
                 }
             }
         }
 
         if (isRepairing)
         {
-            if (Input.GetMouseButton(0))
+            if (Input.GetMouseButton(0) && currentRepairAntenna != null)
             {
                 repairTimer += Time.deltaTime;
-                if (progressImage != null) progressImage.fillAmount = repairTimer / 5.0f;
+                if (progressImage != null) 
+                {
+                    progressImage.fillAmount = repairTimer / 5.0f;
+                }
                 
                 if (repairTimer >= 5.0f)
                 {
-                    AntennaController antenna = null;
-                    if (Physics.Raycast(cam.position, cam.forward, out RaycastHit repairHit, pickupRange, wrenchLayer))
-                        antenna = repairHit.collider.GetComponentInParent<AntennaController>();
-                    
-                    if (antenna != null) antenna.Repair();
+                    currentRepairAntenna.Repair();
                     StopRepair();
                 }
             }
@@ -133,9 +142,16 @@ public class ItemPickup : MonoBehaviour
 
     private void StopRepair()
     {
-        if (repairRoutine != null) StopCoroutine(repairRoutine);
+        if (repairRoutine != null)
+        {
+            StopCoroutine(repairRoutine);
+        }
         isRepairing = false;
-        if (progressImage != null) progressImage.fillAmount = 0;
+        currentRepairAntenna = null;
+        if (progressImage != null)
+        {
+            progressImage.fillAmount = 0;
+        }
     }
 
     private bool IsHoveringDish()
