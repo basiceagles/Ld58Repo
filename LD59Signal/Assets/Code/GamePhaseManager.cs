@@ -12,6 +12,9 @@ public class GamePhaseManager : MonoBehaviour
     public bool isStormActive = false;
     public int stormCount = 0;
     public int breaksThisStorm = 0;
+    
+    private bool goalReached = false;
+    private float chainCheckTimer = 0.5f;
 
     private void Start()
     {
@@ -41,6 +44,15 @@ public class GamePhaseManager : MonoBehaviour
             while (currentTimer > 0)
             {
                 currentTimer -= Time.deltaTime;
+                
+                // Проверяем цепочку сигнала раз в полсекунды
+                chainCheckTimer -= Time.deltaTime;
+                if (chainCheckTimer <= 0)
+                {
+                    CheckSignalChain();
+                    chainCheckTimer = 0.5f;
+                }
+                
                 yield return null;
             }
 
@@ -79,7 +91,6 @@ public class GamePhaseManager : MonoBehaviour
             }
             yield return new WaitForSeconds(breakCheckInterval);
 
-            // Получаем список исправных антенн
             List<AntennaController> healthyAntennas = GetHealthyAntennas();
             int maxBreaksAllowed = GetMaxBreaksLimit(stormCount);
 
@@ -129,13 +140,61 @@ public class GamePhaseManager : MonoBehaviour
         List<AntennaController> list = new List<AntennaController>();
         foreach (var a in all)
         {
-            // Шторм ломает только те антенны, которые ВКЛЮЧЕНЫ и ИСПРАВНЫ
             if (a != null && !a.IsBroken && !a.IsDestroyed && a.IsPowered)
             {
                 list.Add(a);
             }
         }
         return list;
+    }
+
+    private void CheckSignalChain()
+    {
+        AntennaController current = null;
+        foreach (var a in FindObjectsOfType<AntennaController>())
+        {
+            if (a.isStartingAntenna)
+            {
+                current = a;
+                break;
+            }
+        }
+
+        if (current == null)
+        {
+            return;
+        }
+
+        HashSet<AntennaController> visited = new HashSet<AntennaController>();
+        while (current != null)
+        {
+            if (visited.Contains(current)) 
+            {
+                break;
+            }
+            visited.Add(current);
+
+            if (!current.IsPowered || current.IsBroken || current.IsDestroyed) 
+            {
+                break;
+            }
+            AntennaController next = current.GetTargetAntenna();
+            SignalGoal goal = current.GetTargetGoal();
+
+            if (goal != null)
+            {
+                if (!goalReached)
+                {
+                    goal.OnSignalReached();
+                    goalReached = true;
+                }
+                return;
+            }
+
+            current = next;
+        }
+
+        goalReached = false;
     }
 
     private int GetMaxBreaksLimit(int stormIdx)
@@ -182,7 +241,7 @@ public class GamePhaseManager : MonoBehaviour
     }
 
     [ContextMenu("Debug/Break Random Antenna")]
-    public void ForceBreakRandomAntenna()
+    public void BreakRandomAntenna()
     {
         List<AntennaController> healthy = GetHealthyAntennas();
         if (healthy.Count > 0)
