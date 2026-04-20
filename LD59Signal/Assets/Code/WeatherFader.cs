@@ -149,6 +149,10 @@ public sealed class WeatherFader : MonoBehaviour
         }
 
         _fadeRoutine = StartCoroutine(FadeRoutine(targetPreset, Mathf.Max(0f, fadeTimeSeconds)));
+        
+        // Start audio crossfade
+        AudioClip targetClip = targetPreset.Equals(_foggyWeather) ? _foggyAmbientClip : _basicAmbientClip;
+        StartCoroutine(CrossfadeAmbient(targetClip, Mathf.Max(0f, fadeTimeSeconds)));
     }
 
     private WeatherPreset GetPreset(WeatherType weatherType)

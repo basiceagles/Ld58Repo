@@ -271,7 +271,7 @@ MonoBehaviour:
   placementYOffset: 0
   heldRotationOffset: {x: 0, y: 0, z: 0}
   heldPositionOffset: {x: 0, y: 0, z: 0}
-  pickupOnBodyHoldPoint: 0
+  pickupOnBodyHoldPoint: 1
   placementAudioSource: {fileID: 0}
   icon: {fileID: 21300000, guid: c3bef6a56f96da243937da7c405c1a2c, type: 3}
   itemAnimator: {fileID: 1614146641104480189}
@@ -821,6 +821,10 @@ PrefabInstance:
     - target: {fileID: 4418473098069316928, guid: 4a1e392418d009f4bbc06552a9172c09, type: 3}
       propertyPath: m_ConstrainProportionsScale
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6830945432629781959, guid: 4a1e392418d009f4bbc06552a9172c09, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6830945432629781959, guid: 4a1e392418d009f4bbc06552a9172c09, type: 3}
       propertyPath: m_ConstrainProportionsScale

@@ -64,6 +64,8 @@ public class ItemPickup : MonoBehaviour
         if (interactionPrompt != null) interactionPrompt.SetActive(false);
         if (promptText != null) promptText.gameObject.SetActive(false);
 
+        if (IsAnyAntennaViewing()) return;
+
         HandleHighlightAndPickup();
         if (inventory.GetCurrentItem() != null)
         {
@@ -77,6 +79,15 @@ public class ItemPickup : MonoBehaviour
         
         HandleRepair();
         HandleDishRotation();
+    }
+
+    private bool IsAnyAntennaViewing()
+    {
+        foreach (var antenna in FindObjectsOfType<AntennaController>())
+        {
+            if (antenna.IsViewing) return true;
+        }
+        return false;
     }
 
     private void HandleRepair()
@@ -95,7 +106,7 @@ public class ItemPickup : MonoBehaviour
                 if (interactionPrompt != null)
                 {
                     interactionPrompt.SetActive(true);
-                    if (promptText != null) promptText.text = "LMB - Чинить";
+                    if (promptText != null) promptText.text = "LMB - Repair";
                 }
 
                 if (Input.GetMouseButtonDown(0) && !isRepairing)
@@ -189,7 +200,7 @@ public class ItemPickup : MonoBehaviour
                 if (spawner != null)
                 {
                     UpdateOutline(spawner.gameObject);
-                    if (promptText != null) promptText.text = "E - Подобрать";
+                    if (promptText != null) promptText.text = "E - Pickup";
                     if (Input.GetKeyDown(KeyCode.E) && inventory.GetEmptySlot() != -1 && spawner.itemPrefab != null)
                     {
                         PickupObject(Instantiate(spawner.itemPrefab), inventory.GetEmptySlot(), null);
@@ -205,7 +216,7 @@ public class ItemPickup : MonoBehaviour
 
                 if (antenna != null && hit.collider.gameObject == antenna.dishPart && !antenna.IsLocked)
                     {
-                        if (promptText != null) promptText.text = "Q/E - Крутить";
+                        if (promptText != null) promptText.text = "Q/E - Rotate";
                     }
                     else if (antenna != null && hit.collider.gameObject == antenna.dishPart && antenna.IsLocked)
                     {
@@ -213,7 +224,7 @@ public class ItemPickup : MonoBehaviour
                     }
                     else
                     {
-                        if (promptText != null) promptText.text = "E - Взаимодействие";
+                        if (promptText != null) promptText.text = "E - Interact";
                     }
 
                     if (Input.GetKeyDown(KeyCode.E))
