@@ -41,19 +41,11 @@ public sealed class WeatherFader : MonoBehaviour
     [SerializeField] private WeatherPreset _basicWeather;
     [SerializeField] private WeatherPreset _foggyWeather;
 
-    [Header("Fade")]
+    [Header("Transition Settings")]
     [Min(0f)]
     [SerializeField] private float _defaultFadeTimeSeconds = 1f;
 
-    [Header("Loop")]
-    [SerializeField] private bool _autoStartLoop = false;
-    [Min(0f)]
-    [SerializeField] private float _basicDurationSeconds = 10f;
-    [Min(0f)]
-    [SerializeField] private float _foggyDurationSeconds = 10f;
-
     private Coroutine _fadeRoutine;
-    private Coroutine _loopRoutine;
     private float _ambientInitialVolume = 1f;
     private AudioSource _activeAmbientSource;
     private AudioSource _inactiveAmbientSource;
@@ -100,31 +92,6 @@ public sealed class WeatherFader : MonoBehaviour
     {
         Apply(_basicWeather);
         StartAmbientImmediate(_basicAmbientClip);
-
-        if (_autoStartLoop)
-        {
-            StartLoop();
-        }
-    }
-
-    private void OnDisable()
-    {
-        StopLoop();
-    }
-
-    public void StartLoop()
-    {
-        StopLoop();
-        _loopRoutine = StartCoroutine(LoopRoutine());
-    }
-
-    public void StopLoop()
-    {
-        if (_loopRoutine != null)
-        {
-            StopCoroutine(_loopRoutine);
-            _loopRoutine = null;
-        }
     }
 
     [ContextMenu("Debug/Fade: Basic -> Foggy")]
@@ -259,20 +226,6 @@ public sealed class WeatherFader : MonoBehaviour
             terrainData.wavingGrassSpeed = preset.grassWindSpeed;
             terrainData.wavingGrassAmount = preset.grassWindSize;
             terrainData.wavingGrassStrength = preset.grassWindBending;
-        }
-    }
-
-    private IEnumerator LoopRoutine()
-    {
-        while (true)
-        {
-            yield return new WaitForSeconds(_basicDurationSeconds);
-            FadeToFoggy();
-            yield return CrossfadeAmbient(_foggyAmbientClip, _audioFadeTimeSeconds);
-
-            yield return new WaitForSeconds(_foggyDurationSeconds);
-            FadeToBasic();
-            yield return CrossfadeAmbient(_basicAmbientClip, _audioFadeTimeSeconds);
         }
     }
 

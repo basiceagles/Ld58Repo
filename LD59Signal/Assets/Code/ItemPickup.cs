@@ -9,6 +9,7 @@ public class ItemPickup : MonoBehaviour
     [SerializeField] private float anglePlace = 15f;
     [SerializeField] private float placementDuration = 2f; 
     [SerializeField] private LayerMask interactableLayer, placementLayer, obstacleLayer;
+    [SerializeField] public LayerMask wrenchLayer;
     [SerializeField] private Transform cam;
     [SerializeField] private TextMeshProUGUI popupText;
     [SerializeField] private GameObject interactionPrompt;
@@ -23,6 +24,8 @@ public class ItemPickup : MonoBehaviour
     private Coroutine placeRoutine;
     private Vector2 popupOriginalPos;
     private float ghostRotationY;
+    private bool isRepairing;
+    private Coroutine repairRoutine;
 
     private void Awake()
     {
@@ -59,7 +62,7 @@ public class ItemPickup : MonoBehaviour
         HandleHighlightAndPickup();
         if (inventory.GetCurrentItem() != null)
         {
-            if (Input.GetKeyDown(KeyCode.Q) && !IsHoveringDish()) 
+            if (Input.GetKeyDown(KeyCode.Q) && !IsHoveringDish() && !isRepairing) 
             {
                 DropObject();
             }
@@ -67,7 +70,64 @@ public class ItemPickup : MonoBehaviour
         }
         else ClearGhost();
         
+        HandleRepair();
         HandleDishRotation();
+    }
+
+    private void HandleRepair()
+    {
+        if (isPlacing) return;
+
+        // Проверяем оба слоя: и интерактивный, и ключ
+        LayerMask combinedMask = interactableLayer | wrenchLayer;
+        if (Physics.Raycast(cam.position, cam.forward, out RaycastHit hit, pickupRange, combinedMask))
+        {
+            AntennaController antenna = hit.collider.GetComponentInParent<AntennaController>();
+            GameObject currentItem = inventory.GetCurrentItem();
+
+            if (antenna != null && antenna.IsBroken && currentItem != null && ((1 << currentItem.layer) & wrenchLayer) != 0)
+            {
+                if (interactionPrompt != null)
+                {
+                    interactionPrompt.SetActive(true);
+                    if (promptText != null) promptText.text = "LMB - Чинить";
+                }
+
+                if (Input.GetMouseButtonDown(0) && !isRepairing)
+                {
+                    repairRoutine = StartCoroutine(RepairRoutine(antenna));
+                }
+            }
+        }
+
+        if (Input.GetMouseButtonUp(0) && isRepairing)
+        {
+            StopRepair();
+        }
+    }
+
+    private IEnumerator RepairRoutine(AntennaController antenna)
+    {
+        isRepairing = true;
+        float timer = 0f;
+        float duration = 5f;
+
+        while (timer < duration)
+        {
+            timer += Time.deltaTime;
+            if (progressImage != null) progressImage.fillAmount = timer / duration;
+            yield return null;
+        }
+
+        antenna.Repair();
+        StopRepair();
+    }
+
+    private void StopRepair()
+    {
+        if (repairRoutine != null) StopCoroutine(repairRoutine);
+        isRepairing = false;
+        if (progressImage != null) progressImage.fillAmount = 0;
     }
 
     private bool IsHoveringDish()
@@ -104,15 +164,14 @@ public class ItemPickup : MonoBehaviour
 
     private void HandleHighlightAndPickup()
     {
-        if (interactionPrompt != null) interactionPrompt.SetActive(false);
-
-        if (cam == null || isPlacing) 
+        if (cam == null || isPlacing || isRepairing) 
         {
-            ClearOutline();
+            if (interactionPrompt != null) interactionPrompt.SetActive(false);
             return;
         }
 
-        if (Physics.Raycast(cam.position, cam.forward, out RaycastHit hit, pickupRange, interactableLayer))
+        LayerMask combinedMask = interactableLayer | wrenchLayer;
+        if (Physics.Raycast(cam.position, cam.forward, out RaycastHit hit, pickupRange, combinedMask))
         {
             ItemSpawner spawner = hit.collider.GetComponentInParent<ItemSpawner>();
             ItemData data = hit.collider.GetComponentInParent<ItemData>();
@@ -134,16 +193,17 @@ public class ItemPickup : MonoBehaviour
                 }
                 else if (data != null)
                 {
-                    UpdateOutline(hit.collider.gameObject);
-                    AntennaController antenna = data.GetComponentInChildren<AntennaController>();
-                    
-                    if (antenna != null && hit.collider.gameObject == antenna.dishPart && !antenna.IsSignalConfirmed)
+                AntennaController antenna = data.GetComponentInChildren<AntennaController>();
+                
+                // Всегда разрешаем подсвечивать конкретные детали (кнопки и т.д.)
+                UpdateOutline(hit.collider.gameObject);
+
+                if (antenna != null && hit.collider.gameObject == antenna.dishPart && !antenna.IsLocked)
                     {
                         if (promptText != null) promptText.text = "Q/E - Крутить";
                     }
-                    else if (antenna != null && hit.collider.gameObject == antenna.dishPart && antenna.IsSignalConfirmed)
+                    else if (antenna != null && hit.collider.gameObject == antenna.dishPart && antenna.IsLocked)
                     {
-                        // Hide prompt or show something else when signal is fixed
                         if (interactionPrompt != null) interactionPrompt.SetActive(false);
                     }
                     else
@@ -192,7 +252,16 @@ public class ItemPickup : MonoBehaviour
         Outline outline = obj.GetComponent<Outline>() ?? obj.GetComponentInChildren<Outline>();
         if (outline != null && lastOutline != outline)
         {
-            if (lastOutline != null) lastOutline.enabled = false;
+            if (lastOutline != null) 
+            {
+                // Не выключаем контур, если это корневой контур сломанной антенны
+                AntennaController lastAnt = lastOutline.GetComponent<AntennaController>();
+                if (lastAnt == null || !lastAnt.IsBroken) 
+                {
+                    // А вот если это деталь - можно выключить
+                    lastOutline.enabled = false;
+                }
+            }
             outline.enabled = true;
             lastOutline = outline;
         }
@@ -202,7 +271,12 @@ public class ItemPickup : MonoBehaviour
     {
         if (lastOutline != null)
         {
-            lastOutline.enabled = false; 
+            AntennaController ant = lastOutline.GetComponentInParent<AntennaController>();
+            // Выключаем контур только если это не красная подсветка поломки
+            if (ant == null || !ant.IsBroken)
+            {
+                lastOutline.enabled = false; 
+            }
             lastOutline = null; 
         }
     }

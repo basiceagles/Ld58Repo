@@ -4,6 +4,7 @@ public class AntennaController : MonoBehaviour
 {
     public MeshRenderer baseRenderer;
     public Material bulbOnMaterial;
+    public Material bulbOffMaterial;
     public AudioSource humSource;
     public GameObject buttonPart;
     public GameObject monitorPart;
@@ -16,11 +17,17 @@ public class AntennaController : MonoBehaviour
     public Transform lineTarget;
     public LineRenderer lineRenderer;
     public LayerMask signalLayer;
+    
+    public ParticleSystem smokeEffect;
+    public GameObject ashPrefab;
+    public Color brokenOutlineColor = Color.red;
 
     private bool isPowered;
     private bool isViewing;
     private bool skipE;
     private bool signalConfirmed;
+    private bool isReceivingSignal;
+    public bool IsLocked => signalConfirmed || isReceivingSignal;
     public bool IsSignalConfirmed => signalConfirmed;
     private Camera mainCam;
     private float pan;
@@ -28,6 +35,24 @@ public class AntennaController : MonoBehaviour
     private Quaternion startRot;
     private AntennaController targetAntenna;
     private ItemData itemData;
+    private bool isBroken;
+    private bool isDestroyed;
+    private bool isSignalEstablished;
+
+    public bool IsBroken => isBroken;
+    public bool IsDestroyed => isDestroyed;
+    public bool IsPowered => isPowered;
+
+    private void Awake()
+    {
+        itemData = GetComponentInParent<ItemData>();
+        
+        foreach (var o in GetComponentsInChildren<Outline>(true))
+        {
+            o.enabled = false;
+            o.OutlineColor = Color.white;
+        }
+    }
 
     private void Start()
     {
@@ -48,11 +73,12 @@ public class AntennaController : MonoBehaviour
             lineRenderer.enabled = false;
         }
 
-        itemData = GetComponentInParent<ItemData>();
     }
 
     public void OnInteract(GameObject hit)
     {
+        if (isBroken || isDestroyed) return;
+
         if (IsPartOf(hit, buttonPart))
         {
             if (!isPowered)
@@ -71,16 +97,23 @@ public class AntennaController : MonoBehaviour
             }
             else
             {
-                // Unpower and fold
                 isPowered = false;
-                if (humSource) humSource.Stop();
+                if (humSource)
+                {
+                    humSource.Stop();
+                }
                 if (baseRenderer && baseRenderer.materials.Length > 1)
                 {
                     Material[] mats = baseRenderer.materials;
-                    mats[1] = null; 
+                    mats[1] = bulbOffMaterial; 
                     baseRenderer.materials = mats;
                 }
-                if (itemData) itemData.ToggleActivation(); 
+                if (itemData) 
+                {
+                    itemData.ToggleActivation(); 
+                }
+                
+                if (lineRenderer) lineRenderer.enabled = false;
             }
         }
         else if (IsPartOf(hit, monitorPart) && isPowered && !isViewing)
@@ -158,7 +191,34 @@ public class AntennaController : MonoBehaviour
 
     private void Update()
     {
-        if (!isViewing)
+        if (isSignalEstablished && lineRenderer != null)
+        {
+            if (targetAntenna == null)
+            {
+                lineRenderer.enabled = false;
+            }
+            else
+            {
+                bool canShowLine = isPowered && !isBroken && !isDestroyed && targetAntenna.IsPowered && !targetAntenna.IsBroken && !targetAntenna.IsDestroyed;
+                
+                lineRenderer.enabled = canShowLine;
+                if (canShowLine)
+                {
+                    DrawSignalLine(linePoint.position, targetAntenna.lineTarget.position);
+                }
+                else
+                {
+                    lineRenderer.positionCount = 0; 
+                }
+            }
+        }
+        else if (lineRenderer != null && !isSignalEstablished)
+        {
+            lineRenderer.enabled = false;
+            lineRenderer.positionCount = 0;
+        }
+
+        if (!isViewing || isBroken || isDestroyed)
         {
             return;
         }
@@ -188,11 +248,6 @@ public class AntennaController : MonoBehaviour
         {
             antennaCamera.transform.localRotation = startRot * Quaternion.Euler(tilt, pan, 0);
         }
-
-        if (lineRenderer && lineRenderer.enabled && targetAntenna != null && targetAntenna.lineTarget != null)
-        {
-            DrawSignalLine(linePoint.position, targetAntenna.lineTarget.position);
-        }
     }
 
     private void TrySignal()
@@ -209,9 +264,9 @@ public class AntennaController : MonoBehaviour
             if (other != null && other != this && IsPartOf(hit.collider.gameObject, other.dishPart))
             {
                 signalConfirmed = true;
+                isSignalEstablished = true; 
                 targetAntenna = other;
-                Debug.Log("сигнал установлен");
-
+                other.SetReceivingSignal(true);
                 lineRenderer.enabled = true;
                 lineRenderer.startWidth = 0.03f;
                 lineRenderer.endWidth = 0.03f;
@@ -229,11 +284,66 @@ public class AntennaController : MonoBehaviour
 
     public void RotateDishManual(float input)
     {
-        if (signalConfirmed) return;
+        if (IsLocked)
+        {
+            return;
+        }
 
         if (dishPart)
         {
             dishPart.transform.Rotate(Vector3.up, input * rotSpeed * Time.deltaTime, Space.World);
         }
     }
+
+    public void SetReceivingSignal(bool state)
+    {
+        isReceivingSignal = state;
+    }
+
+    public void Break()
+    {
+        isBroken = true;
+        if (smokeEffect)
+        {
+            smokeEffect.Play();
+        }
+        
+        foreach (var lr in GetComponentsInChildren<LineRenderer>(true))
+        {
+            lr.positionCount = 0;
+            lr.enabled = false;
+        }
+        
+        foreach (var o in GetComponentsInChildren<Outline>(true))
+        {
+            o.enabled = true;
+            o.OutlineColor = brokenOutlineColor;
+        }
+    }
+
+    public void Repair()
+    {
+        isBroken = false;
+        if (smokeEffect) smokeEffect.Stop();
+        
+        foreach (var o in GetComponentsInChildren<Outline>(true))
+        {
+            o.enabled = false;
+            o.OutlineColor = Color.white;
+        }
+    }
+
+    public void DestroyToAsh()
+    {
+        if (isDestroyed) return;
+        isDestroyed = true;
+        
+        if (targetAntenna != null) targetAntenna.SetReceivingSignal(false);
+
+        if (ashPrefab) Instantiate(ashPrefab, transform.position, transform.rotation);
+        Destroy(gameObject);
+    }
+
+    [ContextMenu("Debug/Break Antenna")]
+    public void DebugBreak() => Break();
 }
