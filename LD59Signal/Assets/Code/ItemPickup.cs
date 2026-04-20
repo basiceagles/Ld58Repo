@@ -31,6 +31,7 @@ public class ItemPickup : MonoBehaviour
     private float ghostRotationY;
     private bool isRepairing;
     private Coroutine repairRoutine;
+    private float repairTimer;
 
     private void Awake()
     {
@@ -100,32 +101,34 @@ public class ItemPickup : MonoBehaviour
 
                 if (Input.GetMouseButtonDown(0) && !isRepairing)
                 {
-                    repairRoutine = StartCoroutine(RepairRoutine(antenna));
+                    isRepairing = true;
+                    repairTimer = 0;
                 }
             }
         }
 
-        if (Input.GetMouseButtonUp(0) && isRepairing)
+        if (isRepairing)
         {
-            StopRepair();
+            if (Input.GetMouseButton(0))
+            {
+                repairTimer += Time.deltaTime;
+                if (progressImage != null) progressImage.fillAmount = repairTimer / 5.0f;
+                
+                if (repairTimer >= 5.0f)
+                {
+                    AntennaController antenna = null;
+                    if (Physics.Raycast(cam.position, cam.forward, out RaycastHit repairHit, pickupRange, wrenchLayer))
+                        antenna = repairHit.collider.GetComponentInParent<AntennaController>();
+                    
+                    if (antenna != null) antenna.Repair();
+                    StopRepair();
+                }
+            }
+            else
+            {
+                StopRepair();
+            }
         }
-    }
-
-    private IEnumerator RepairRoutine(AntennaController antenna)
-    {
-        isRepairing = true;
-        float timer = 0f;
-        float duration = 5f;
-
-        while (timer < duration)
-        {
-            timer += Time.deltaTime;
-            if (progressImage != null) progressImage.fillAmount = timer / duration;
-            yield return null;
-        }
-
-        antenna.Repair();
-        StopRepair();
     }
 
     private void StopRepair()
@@ -171,7 +174,10 @@ public class ItemPickup : MonoBehaviour
     {
         if (cam == null || isPlacing || isRepairing) 
         {
-            if (interactionPrompt != null) interactionPrompt.SetActive(false);
+            if (interactionPrompt != null)
+            {
+                interactionPrompt.SetActive(false);
+            }
             return;
         }
 
@@ -183,13 +189,22 @@ public class ItemPickup : MonoBehaviour
 
             if (spawner != null || data != null)
             {
-                if (interactionPrompt != null) interactionPrompt.SetActive(true);
-                if (promptText != null) promptText.gameObject.SetActive(true);
+                if (interactionPrompt != null) 
+                {
+                    interactionPrompt.SetActive(true);
+                }
+                if (promptText != null) 
+                {
+                    promptText.gameObject.SetActive(true);
+                }
 
                 if (spawner != null)
                 {
                     UpdateOutline(spawner.gameObject);
-                    if (promptText != null) promptText.text = "E - Pickup";
+                    if (promptText != null)
+                    {
+                        promptText.text = "E - Pickup";
+                    }
                     if (Input.GetKeyDown(KeyCode.E) && inventory.GetEmptySlot() != -1 && spawner.itemPrefab != null)
                     {
                         PickupObject(Instantiate(spawner.itemPrefab), inventory.GetEmptySlot(), null);
@@ -200,7 +215,6 @@ public class ItemPickup : MonoBehaviour
                 {
                 AntennaController antenna = data.GetComponentInChildren<AntennaController>();
                 
-                // Всегда разрешаем подсвечивать конкретные детали (кнопки и т.д.)
                 UpdateOutline(hit.collider.gameObject);
 
                 if (antenna != null && hit.collider.gameObject == antenna.dishPart && !antenna.IsLocked)
@@ -220,9 +234,18 @@ public class ItemPickup : MonoBehaviour
                     {
                         if (data.isPlaced)
                         {
-                            if (!data.isActivated) data.ToggleActivation();
-                            else if (antenna != null) antenna.OnInteract(hit.collider.gameObject);
-                            else data.ToggleActivation();
+                            if (!data.isActivated)
+                            {
+                                data.ToggleActivation();
+                            }
+                            else if (antenna != null) 
+                            {
+                                antenna.OnInteract(hit.collider.gameObject);
+                            }
+                            else 
+                            {
+                                data.ToggleActivation();
+                            }
                         }
                         else if (inventory.GetEmptySlot() != -1)
                         {
@@ -245,7 +268,10 @@ public class ItemPickup : MonoBehaviour
 
     private void DisableAllOutlinesOnObject(GameObject obj)
     {
-        if (obj == null) return;
+        if (obj == null) 
+        {
+            return;
+        }
         foreach (var o in obj.GetComponentsInChildren<Outline>(true))
         {
             o.enabled = false;
@@ -259,11 +285,9 @@ public class ItemPickup : MonoBehaviour
         {
             if (lastOutline != null) 
             {
-                // Не выключаем контур, если это корневой контур сломанной антенны
                 AntennaController lastAnt = lastOutline.GetComponent<AntennaController>();
                 if (lastAnt == null || !lastAnt.IsBroken) 
                 {
-                    // А вот если это деталь - можно выключить
                     lastOutline.enabled = false;
                 }
             }
@@ -277,7 +301,6 @@ public class ItemPickup : MonoBehaviour
         if (lastOutline != null)
         {
             AntennaController ant = lastOutline.GetComponentInParent<AntennaController>();
-            // Выключаем контур только если это не красная подсветка поломки
             if (ant == null || !ant.IsBroken)
             {
                 lastOutline.enabled = false; 
@@ -457,17 +480,28 @@ public class ItemPickup : MonoBehaviour
         }
 
         float timer = 0f;
-        while (timer < placementDuration) 
+        float actualDuration = DevCheats.IsActive ? 0.01f : placementDuration;
+
+        while (timer < actualDuration) 
         {
             timer += Time.deltaTime; 
             if (progressImage != null)
             {
-                progressImage.fillAmount = timer / placementDuration;
+                progressImage.fillAmount = timer / actualDuration;
             }
             yield return null; 
         }
 
-        GameObject obj = inventory.RemoveCurrentItem();
+        GameObject obj;
+        if (DevCheats.IsActive)
+        {
+            obj = Instantiate(inventory.GetCurrentItem());
+        }
+        else
+        {
+            obj = inventory.RemoveCurrentItem();
+        }
+
         if (obj != null)
         {
             obj.transform.position = pos; 

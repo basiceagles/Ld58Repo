@@ -21,6 +21,7 @@ public class AntennaController : MonoBehaviour
     public ParticleSystem smokeEffect;
     public GameObject ashPrefab;
     public Color brokenOutlineColor = Color.red;
+    public bool isStartingAntenna;
 
     private bool isPowered;
     private bool isViewing;
@@ -38,15 +39,23 @@ public class AntennaController : MonoBehaviour
     private bool isBroken;
     private bool isDestroyed;
     private bool isSignalEstablished;
+    private SignalGoal targetGoal;
 
     public bool IsBroken => isBroken;
     public bool IsDestroyed => isDestroyed;
     public bool IsPowered => isPowered;
+    public AntennaController GetTargetAntenna() => targetAntenna;
+    public SignalGoal GetTargetGoal() => targetGoal;
 
     private void Awake()
     {
         itemData = GetComponentInParent<ItemData>();
         
+        if (isStartingAntenna)
+        {
+            isPowered = true;
+        }
+
         foreach (var o in GetComponentsInChildren<Outline>(true))
         {
             o.enabled = false;
@@ -59,10 +68,24 @@ public class AntennaController : MonoBehaviour
         if (antennaCamera != null)
         {
             startRot = antennaCamera.transform.localRotation;
+
+            if (isStartingAntenna)
+            {
+                if (itemData) itemData.ToggleActivation();
+                if (humSource) humSource.Play();
+                
+                // Также меняем материал лампочки сразу
+                if (baseRenderer && baseRenderer.materials.Length > 1)
+                {
+                    Material[] mats = baseRenderer.materials;
+                    mats[1] = bulbOnMaterial;
+                    baseRenderer.materials = mats;
+                }
+            }
             antennaCamera.enabled = false;
 
             AudioListener al = antennaCamera.GetComponent<AudioListener>();
-            if (al)
+            if (al != null)
             {
                 al.enabled = false;
             }
@@ -77,7 +100,15 @@ public class AntennaController : MonoBehaviour
 
     public void OnInteract(GameObject hit)
     {
-        if (skipE || isBroken || isDestroyed) return;
+        if (isStartingAntenna && IsPartOf(hit, buttonPart))
+        {
+            return;
+        }
+        
+        if (skipE || isBroken || isDestroyed)
+        {
+            return;
+        }
 
         if (IsPartOf(hit, buttonPart))
         {
@@ -122,13 +153,13 @@ public class AntennaController : MonoBehaviour
         }
     }
 
-    private bool IsPartOf(GameObject hit, GameObject part)
+    private bool IsPartOf(GameObject hit, GameObject target)
     {
-        if (part == null)
+        if (target == null || hit == null) 
         {
             return false;
         }
-        return hit == part || hit.transform.IsChildOf(part.transform);
+        return hit == target || hit.transform.IsChildOf(target.transform) || target.transform.IsChildOf(hit.transform);
     }
 
     private void EnterView()
@@ -203,18 +234,23 @@ public class AntennaController : MonoBehaviour
 
         if (isSignalEstablished && lineRenderer != null)
         {
-            if (targetAntenna == null)
+            if (targetAntenna == null && targetGoal == null)
             {
                 lineRenderer.enabled = false;
             }
             else
             {
-                bool canShowLine = isPowered && !isBroken && !isDestroyed && targetAntenna.IsPowered && !targetAntenna.IsBroken && !targetAntenna.IsDestroyed;
+                bool canShowLine = isPowered && !isBroken && !isDestroyed;
+                if (targetAntenna != null)
+                {
+                    canShowLine &= targetAntenna.IsPowered && !targetAntenna.IsBroken && !targetAntenna.IsDestroyed;
+                }
                 
                 lineRenderer.enabled = canShowLine;
                 if (canShowLine)
                 {
-                    DrawSignalLine(linePoint.position, targetAntenna.lineTarget.position);
+                    Vector3 targetPos = targetAntenna != null ? targetAntenna.lineTarget.position : targetGoal.lineTarget.position;
+                    DrawSignalLine(linePoint.position, targetPos);
                 }
                 else
                 {
@@ -246,7 +282,7 @@ public class AntennaController : MonoBehaviour
             return;
         }
 
-        if (Input.GetMouseButtonDown(0) && !signalConfirmed)
+        if (Input.GetMouseButtonDown(0))
         {
             TrySignal();
         }
@@ -262,17 +298,29 @@ public class AntennaController : MonoBehaviour
 
     private void TrySignal()
     {
-        if (antennaCamera == null)
-        {
-            return;
-        }
+        if (antennaCamera == null) return;
 
         Ray ray = new Ray(antennaCamera.transform.position, antennaCamera.transform.forward);
         if (Physics.Raycast(ray, out RaycastHit hit, 500f, signalLayer))
         {
+            GameObject hitObj = hit.collider.gameObject;
+            if (targetAntenna != null)
+            {
+                targetAntenna.SetReceivingSignal(false);
+            }
+            targetAntenna = null;
+            targetGoal = null;
+            isSignalEstablished = false;
+            // Ищем другую антенну
             AntennaController other = hit.collider.GetComponentInParent<AntennaController>();
             if (other != null && other != this && IsPartOf(hit.collider.gameObject, other.dishPart))
             {
+                // Нельзя установить связь с неработающей антенной
+                if (!other.IsPowered || other.IsBroken || other.IsDestroyed) 
+                {
+                    return;
+                }
+
                 signalConfirmed = true;
                 isSignalEstablished = true; 
                 targetAntenna = other;
@@ -281,6 +329,19 @@ public class AntennaController : MonoBehaviour
                 lineRenderer.startWidth = 0.03f;
                 lineRenderer.endWidth = 0.03f;
                 DrawSignalLine(linePoint.position, other.lineTarget.position);
+                return;
+            }
+
+            SignalGoal goal = hit.collider.GetComponentInParent<SignalGoal>();
+            if (goal != null)
+            {
+                signalConfirmed = true;
+                isSignalEstablished = true;
+                targetGoal = goal;
+                lineRenderer.enabled = true;
+                lineRenderer.startWidth = 0.03f;
+                lineRenderer.endWidth = 0.03f;
+                DrawSignalLine(linePoint.position, goal.lineTarget.position);
             }
         }
     }
@@ -312,6 +373,11 @@ public class AntennaController : MonoBehaviour
 
     public void Break()
     {
+        if (isStartingAntenna) 
+        {
+            return;
+        }
+
         isBroken = true;
         if (smokeEffect)
         {
