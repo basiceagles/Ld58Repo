@@ -221,6 +221,14 @@ MonoBehaviour:
   obstacleLayer:
     serializedVersion: 2
     m_Bits: 8192
+  wrenchLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  exclusionLayer:
+    serializedVersion: 2
+    m_Bits: 4096
+  exclusionRadius: 3
+  cannotPlaceText: {fileID: 0}
   cam: {fileID: 8038571964911176102}
   popupText: {fileID: 0}
   interactionPrompt: {fileID: 0}

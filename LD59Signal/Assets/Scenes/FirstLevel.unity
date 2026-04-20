@@ -5781,6 +5781,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1951495006}
     m_Modifications:
+    - target: {fileID: 1134696390046913176, guid: 54649fa38419b7e4fbd0c519c59eb1b3, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2507622445558243636, guid: 54649fa38419b7e4fbd0c519c59eb1b3, type: 3}
       propertyPath: m_Name
       value: ScrapNearby
@@ -44271,6 +44275,7 @@ GameObject:
   - component: {fileID: 2016448068}
   - component: {fileID: 2016448070}
   - component: {fileID: 2016448071}
+  - component: {fileID: 2016448072}
   m_Layer: 0
   m_Name: WeatherManager
   m_TagString: Untagged
@@ -44317,9 +44322,6 @@ MonoBehaviour:
     grassWindSize: 0.25
     grassWindBending: 0.1
   _defaultFadeTimeSeconds: 5
-  _autoStartLoop: 1
-  _basicDurationSeconds: 100
-  _foggyDurationSeconds: 10
 --- !u!4 &2016448069
 Transform:
   m_ObjectHideFlags: 0
@@ -44529,6 +44531,26 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &2016448072
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2016448067}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b8302cf14c688a14daa7c547c0e785c9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  goodPhaseDuration: 210
+  stormDuration: 90
+  breakCheckInterval: 20
+  weatherFader: {fileID: 2016448068}
+  currentTimer: 0
+  isStormActive: 0
+  stormCount: 0
+  breaksThisStorm: 0
 --- !u!1001 &2018889549
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -47961,8 +47983,8 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 231123475}
     - target: {fileID: 3862843860715892094, guid: 71bd443386866214ab3bd3566f78e053, type: 3}
-      propertyPath: exclusionLayer.m_Bits
-      value: 4096
+      propertyPath: wrenchLayer.m_Bits
+      value: 32768
       objectReference: {fileID: 0}
     - target: {fileID: 5540673476580303873, guid: 71bd443386866214ab3bd3566f78e053, type: 3}
       propertyPath: m_Name
@@ -48288,6 +48310,10 @@ PrefabInstance:
     - target: {fileID: 2229579506572702461, guid: 2e31cd9880f1e464aa80baa79537b05b, type: 3}
       propertyPath: m_Layer
       value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 2530680895040001381, guid: 2e31cd9880f1e464aa80baa79537b05b, type: 3}
+      propertyPath: m_CastShadows
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2663294789330790365, guid: 2e31cd9880f1e464aa80baa79537b05b, type: 3}
       propertyPath: m_Layer
