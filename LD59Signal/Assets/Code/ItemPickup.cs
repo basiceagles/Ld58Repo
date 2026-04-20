@@ -64,8 +64,6 @@ public class ItemPickup : MonoBehaviour
         if (interactionPrompt != null) interactionPrompt.SetActive(false);
         if (promptText != null) promptText.gameObject.SetActive(false);
 
-        if (IsAnyAntennaViewing()) return;
-
         HandleHighlightAndPickup();
         if (inventory.GetCurrentItem() != null)
         {
@@ -79,15 +77,6 @@ public class ItemPickup : MonoBehaviour
         
         HandleRepair();
         HandleDishRotation();
-    }
-
-    private bool IsAnyAntennaViewing()
-    {
-        foreach (var antenna in FindObjectsOfType<AntennaController>())
-        {
-            if (antenna.IsViewing) return true;
-        }
-        return false;
     }
 
     private void HandleRepair()
