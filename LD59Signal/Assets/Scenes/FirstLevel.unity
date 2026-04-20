@@ -48327,10 +48327,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1074999207}
     m_Modifications:
-    - target: {fileID: 2577512879783888230, guid: c4e6d5eea5546bb4aa69425fe1675b55, type: 3}
-      propertyPath: isActivated
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 3203462598359384488, guid: c4e6d5eea5546bb4aa69425fe1675b55, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.248
@@ -48369,10 +48365,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3203462598359384488, guid: c4e6d5eea5546bb4aa69425fe1675b55, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3884743292493466048, guid: c4e6d5eea5546bb4aa69425fe1675b55, type: 3}
-      propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4296858000316578386, guid: c4e6d5eea5546bb4aa69425fe1675b55, type: 3}
@@ -48705,7 +48697,7 @@ MonoBehaviour:
   placementAudioSource: {fileID: 0}
   icon: {fileID: 21300000, guid: c3bef6a56f96da243937da7c405c1a2c, type: 3}
   itemAnimator: {fileID: 1614146641090095261}
-  isPlaced: 0
+  isPlaced: 1
   isActivated: 0
 --- !u!20 &2645330874712710407
 Camera:
