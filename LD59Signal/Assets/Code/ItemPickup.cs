@@ -203,6 +203,13 @@ public class ItemPickup : MonoBehaviour
             ItemSpawner spawner = hit.collider.GetComponentInParent<ItemSpawner>();
             ItemData data = hit.collider.GetComponentInParent<ItemData>();
 
+            // Skip buried items — only metal detector can interact with them
+            if (data != null && data.isBuried)
+            {
+                ClearOutline();
+                return;
+            }
+
             if (spawner != null || data != null)
             {
                 if (interactionPrompt != null) 

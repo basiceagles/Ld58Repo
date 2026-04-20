@@ -16,6 +16,7 @@ public class ItemData : MonoBehaviour
     public Animator itemAnimator;
     public bool isPlaced = false; 
     public bool isActivated = false;
+    public bool isBuried = false;
 
     private void Start()
     {

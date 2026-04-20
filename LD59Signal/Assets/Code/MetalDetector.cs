@@ -161,6 +161,11 @@ public class MetalDetector : MonoBehaviour
         }
 
         scrapCollider.transform.position = targetPos;
+        
+        // Mark item as no longer buried so player can interact with it
+        ItemData itemData = scrapCollider.GetComponentInParent<ItemData>();
+        if (itemData != null) itemData.isBuried = false;
+        
         activationCoroutine = null;
     }
 
