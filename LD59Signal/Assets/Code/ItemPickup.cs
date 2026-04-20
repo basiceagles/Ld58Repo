@@ -9,6 +9,11 @@ public class ItemPickup : MonoBehaviour
     [SerializeField] private float anglePlace = 15f;
     [SerializeField] private float placementDuration = 2f; 
     [SerializeField] private LayerMask interactableLayer, placementLayer, obstacleLayer;
+    
+    [Header("Proximity Check")]
+    [SerializeField] private LayerMask exclusionLayer;
+    [SerializeField] private float exclusionRadius = 3f;
+    [SerializeField] private TextMeshProUGUI cannotPlaceText;
     [SerializeField] private Transform cam;
     [SerializeField] private TextMeshProUGUI popupText;
     [SerializeField] private GameObject interactionPrompt;
@@ -265,6 +270,22 @@ public class ItemPickup : MonoBehaviour
         if (Physics.Raycast(cam.position, cam.forward, out RaycastHit hit, 5f, placementLayer))
         {
             bool canPlace = Vector3.Angle(hit.normal, Vector3.up) < anglePlace;
+            bool tooCloseToExclusion = false;
+
+            if (canPlace && exclusionLayer != 0)
+            {
+                Collider[] nearby = Physics.OverlapSphere(hit.point, exclusionRadius, exclusionLayer);
+                if (nearby.Length > 0)
+                {
+                    canPlace = false;
+                    tooCloseToExclusion = true;
+                }
+            }
+
+            if (cannotPlaceText != null)
+            {
+                cannotPlaceText.gameObject.SetActive(tooCloseToExclusion);
+            }
 
             if (currentGhost == null && data.ghostPrefab != null)
             {
@@ -336,6 +357,10 @@ public class ItemPickup : MonoBehaviour
         else 
         {
             ClearGhost();
+            if (cannotPlaceText != null)
+            {
+                cannotPlaceText.gameObject.SetActive(false);
+            }
         }
 
         if (Input.GetMouseButtonUp(0) && isPlacing)
@@ -413,6 +438,11 @@ public class ItemPickup : MonoBehaviour
         }
 
         ghostRotationY = 0;
+        
+        if (cannotPlaceText != null)
+        {
+            cannotPlaceText.gameObject.SetActive(false);
+        }
     }
     
     private IEnumerator ShowPopupTextRoutine(string text)
