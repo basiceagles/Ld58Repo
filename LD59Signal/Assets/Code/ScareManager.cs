@@ -33,7 +33,30 @@ public class ScareManager : MonoBehaviour
         playerTransform = Camera.main.transform;
         playerCamera = Camera.main;
         phaseManager = FindObjectOfType<GamePhaseManager>();
+        
+        SpawnSpecificScare(1, -90f);
+        
         StartCoroutine(ScareLoop());
+    }
+
+    public void SpawnSpecificScare(int index, float xRotation)
+    {
+        if (scarePrefabs == null || index < 0 || index >= scarePrefabs.Length) return;
+        if (playerTransform == null) playerTransform = Camera.main.transform;
+
+        Vector3 spawnPos = playerTransform.position + playerTransform.forward * 5f;
+        if (Physics.Raycast(spawnPos + Vector3.up * 50f, Vector3.down, out RaycastHit hit, 100f, groundLayer))
+        {
+            spawnPos = hit.point;
+        }
+
+        if (currentScare != null) Destroy(currentScare);
+        currentScare = Instantiate(scarePrefabs[index], spawnPos, Quaternion.Euler(xRotation, 0, 0));
+        
+        if (scareSpawnSound != null)
+        {
+            AudioSource.PlayClipAtPoint(scareSpawnSound, spawnPos, spawnSoundVolume);
+        }
     }
 
     private IEnumerator ScareLoop()
@@ -118,17 +141,25 @@ public class ScareManager : MonoBehaviour
                 return;
             }
 
-            GameObject prefab = scarePrefabs[Random.Range(0, scarePrefabs.Length)];
-            currentScare = Instantiate(prefab, spawnPos, Quaternion.identity);
+            int prefabIndex = Random.Range(0, scarePrefabs.Length);
+            GameObject prefab = scarePrefabs[prefabIndex];
+            
+            // Element 1 is spawned with x-90 rotation
+            Quaternion spawnRot = (prefabIndex == 1) ? Quaternion.Euler(-90, 0, 0) : Quaternion.identity;
+            currentScare = Instantiate(prefab, spawnPos, spawnRot);
             
             if (scareSpawnSound != null)
             {
                 AudioSource.PlayClipAtPoint(scareSpawnSound, spawnPos, spawnSoundVolume);
             }
             
-            Vector3 lookPos = playerTransform.position;
-            lookPos.y = currentScare.transform.position.y;
-            currentScare.transform.LookAt(lookPos);
+            // Only look at player if not element 1 to preserve x-90 rotation
+            if (prefabIndex != 1)
+            {
+                Vector3 lookPos = playerTransform.position;
+                lookPos.y = currentScare.transform.position.y;
+                currentScare.transform.LookAt(lookPos);
+            }
         }
     }
 
