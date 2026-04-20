@@ -26,7 +26,7 @@ public class AntennaController : MonoBehaviour
     private bool isViewing;
     private bool skipE;
     private bool signalConfirmed;
-    private bool isReceivingSignal;
+    public bool isReceivingSignal;
     public bool IsLocked => signalConfirmed || isReceivingSignal;
     public bool IsSignalConfirmed => signalConfirmed;
     private Camera mainCam;
@@ -59,6 +59,28 @@ public class AntennaController : MonoBehaviour
         if (antennaCamera != null)
         {
             startRot = antennaCamera.transform.localRotation;
+<<<<<<< Updated upstream
+=======
+
+            if (isStartingAntenna)
+            {
+                if (itemData)
+                {
+                    itemData.ToggleActivation();
+                }
+                if (humSource)
+                {
+                    humSource.Play();
+                }
+                
+                if (baseRenderer && baseRenderer.materials.Length > 1)
+                {
+                    Material[] mats = baseRenderer.materials;
+                    mats[1] = bulbOnMaterial;
+                    baseRenderer.materials = mats;
+                }
+            }
+>>>>>>> Stashed changes
             antennaCamera.enabled = false;
 
             AudioListener al = antennaCamera.GetComponent<AudioListener>();
@@ -199,16 +221,30 @@ public class AntennaController : MonoBehaviour
             }
             else
             {
+<<<<<<< Updated upstream
                 bool canShowLine = isPowered && !isBroken && !isDestroyed && targetAntenna.IsPowered && !targetAntenna.IsBroken && !targetAntenna.IsDestroyed;
                 
                 lineRenderer.enabled = canShowLine;
                 if (canShowLine)
                 {
                     DrawSignalLine(linePoint.position, targetAntenna.lineTarget.position);
+=======
+                bool hasSignal = isStartingAntenna || isReceivingSignal;
+                bool canPropagate = hasSignal && isPowered && !isBroken && !isDestroyed;
+
+                lineRenderer.enabled = canPropagate;
+                if (canPropagate)
+                {
+                    Vector3 targetPos = targetAntenna != null ? targetAntenna.lineTarget.position : targetGoal.lineTarget.position;
+                    DrawSignalLine(linePoint.position, targetPos);
+                    
+                    if (targetAntenna != null) targetAntenna.SetReceivingSignal(true);
+>>>>>>> Stashed changes
                 }
                 else
                 {
-                    lineRenderer.positionCount = 0; 
+                    lineRenderer.positionCount = 0;
+                    if (targetAntenna != null) targetAntenna.SetReceivingSignal(false);
                 }
             }
         }

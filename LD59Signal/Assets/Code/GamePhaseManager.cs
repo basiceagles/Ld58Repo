@@ -138,6 +138,78 @@ public class GamePhaseManager : MonoBehaviour
         return list;
     }
 
+<<<<<<< Updated upstream
+=======
+    private void CheckSignalChain()
+    {
+        AntennaController[] allAntennas = FindObjectsOfType<AntennaController>();
+        
+        foreach (var a in allAntennas)
+        {
+            if (a != null && !a.isStartingAntenna) a.SetReceivingSignal(false);
+        }
+        List<AntennaController> starts = new List<AntennaController>();
+        foreach (var a in allAntennas)
+        {
+            if (a != null && a.isStartingAntenna)
+            {
+                starts.Add(a);
+            }
+        }
+
+        if (starts.Count == 0)
+        {
+            return;
+        }
+
+        HashSet<AntennaController> visited = new HashSet<AntennaController>();
+        bool winFound = false;
+
+        foreach (var start in starts)
+        {
+            AntennaController current = start;
+            while (current != null)
+            {
+                if (visited.Contains(current))
+                {
+                    break;
+                }
+                visited.Add(current);
+
+                if (!current.IsPowered || current.IsBroken || current.IsDestroyed)
+                {
+                    break;
+                }
+
+                AntennaController next = current.GetTargetAntenna();
+                SignalGoal goal = current.GetTargetGoal();
+
+                if (goal != null)
+                {
+                    winFound = true;
+                    if (!goalReached)
+                    {
+                        goalReached = true;
+                        goal.OnSignalReached();
+                    }
+                }
+
+                if (next != null)
+                {
+                    next.SetReceivingSignal(true);
+                    current = next;
+                }
+                else
+                {
+                    break;
+                }
+            }
+        }
+
+        if (!winFound) goalReached = false;
+    }
+
+>>>>>>> Stashed changes
     private int GetMaxBreaksLimit(int stormIdx)
     {
         if (stormIdx <= 2)
