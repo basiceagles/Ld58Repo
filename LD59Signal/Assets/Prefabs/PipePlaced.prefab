@@ -175,6 +175,7 @@ GameObject:
   - component: {fileID: 3702820763114226244}
   - component: {fileID: 5937666294526739148}
   - component: {fileID: 7613292211361528839}
+  - component: {fileID: 6515821471383038243}
   m_Layer: 7
   m_Name: PipePlaced
   m_TagString: Untagged
@@ -300,6 +301,7 @@ MonoBehaviour:
   ashPrefab: {fileID: 3798587769616223982, guid: f11aaf07166f172488c1da7a0677c894, type: 3}
   brokenOutlineColor: {r: 1, g: 0, b: 0, a: 1}
   isStartingAntenna: 0
+  isReceivingSignal: 0
 --- !u!120 &3702820763114226244
 LineRenderer:
   serializedVersion: 2
@@ -452,6 +454,37 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &6515821471383038243
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4296858000316578386}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7337419873991aa47b924b3a7c0421f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _interactionRadius: 3
+  _playerTransform: {fileID: 0}
+  _interactPrompt: {fileID: 0}
+  _decipherScreen: {fileID: 0}
+  _fragments:
+  - targetAmplitude: 1
+    targetFrequency: 3
+    targetPhase: 1.37
+    ampAdjustSpeed: 0.5
+    freqAdjustSpeed: 0.73
+    phaseAdjustSpeed: 0.66
+    hasPhaseControl: 1
+    hasDrift: 0
+    driftSpeed: 0.2
+    noiseStrength: 0
+    noiseInterval: 2
+    hasInversion: 0
+    inversionInterval: 5
+    revealedText: 
 --- !u!1 &5990872202116928197
 GameObject:
   m_ObjectHideFlags: 0

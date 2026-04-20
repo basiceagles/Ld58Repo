@@ -24,18 +24,24 @@ public class DecipherTerminal : MonoBehaviour
     private float _sqrInteractionRadius;
 
     private void Awake()
-    {
-        _sqrInteractionRadius = _interactionRadius * _interactionRadius;
+{
+    _sqrInteractionRadius = _interactionRadius * _interactionRadius;
 
-        if (_decipherScreen == null)
-            Debug.LogError($"[DecipherTerminal] DecipherScreen не назначен!", this);
+    if (_playerTransform == null)
+        _playerTransform = GameObject.FindWithTag("Player")?.transform;
 
-        if (_playerTransform == null)
-            Debug.LogError($"[DecipherTerminal] Player Transform не назначен!", this);
+    if (_decipherScreen == null)
+        _decipherScreen = FindObjectOfType<DecipherScreen>();
 
-        if (_interactPrompt != null)
-            _interactPrompt.SetActive(false);
-    }
+    if (_decipherScreen == null)
+        Debug.LogError($"[DecipherTerminal] DecipherScreen не найден!", this);
+
+    if (_playerTransform == null)
+        Debug.LogError($"[DecipherTerminal] Player Transform не найден!", this);
+
+    if (_interactPrompt != null)
+        _interactPrompt.SetActive(false);
+}
 
    private void Update()
 {
