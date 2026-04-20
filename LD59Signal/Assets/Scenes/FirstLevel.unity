@@ -531,6 +531,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Scrap3 (13)
       objectReference: {fileID: 0}
+    - target: {fileID: 3190170294210138082, guid: 4cbefd5605338fb40ad8749d85a05a7f, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7522458404117890288, guid: 4cbefd5605338fb40ad8749d85a05a7f, type: 3}
+      propertyPath: isBuried
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2597,6 +2605,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Scrap3 (3)
       objectReference: {fileID: 0}
+    - target: {fileID: 3190170294210138082, guid: 4cbefd5605338fb40ad8749d85a05a7f, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7522458404117890288, guid: 4cbefd5605338fb40ad8749d85a05a7f, type: 3}
+      propertyPath: isBuried
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3548,6 +3564,14 @@ PrefabInstance:
     - target: {fileID: 1001570506404310044, guid: 9f8cf219022582648966d7e0a7fdeaee, type: 3}
       propertyPath: m_Name
       value: Scrap2 (8)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1001570506404310044, guid: 9f8cf219022582648966d7e0a7fdeaee, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2056698207862949723, guid: 9f8cf219022582648966d7e0a7fdeaee, type: 3}
+      propertyPath: isBuried
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -5349,6 +5373,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Scrap3 (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 3190170294210138082, guid: 4cbefd5605338fb40ad8749d85a05a7f, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7522458404117890288, guid: 4cbefd5605338fb40ad8749d85a05a7f, type: 3}
+      propertyPath: isBuried
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -6473,6 +6505,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Scrap1 (9)
       objectReference: {fileID: 0}
+    - target: {fileID: 4694798884216303381, guid: 2eac9db04fa730541a1a3cf597f1dfa6, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5362826297173915055, guid: 2eac9db04fa730541a1a3cf597f1dfa6, type: 3}
       propertyPath: m_LocalScale.y
       value: 43.259995
@@ -6521,6 +6557,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7447167845737621767, guid: 2eac9db04fa730541a1a3cf597f1dfa6, type: 3}
+      propertyPath: isBuried
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -6542,6 +6582,10 @@ PrefabInstance:
     - target: {fileID: 4694798884216303381, guid: 2eac9db04fa730541a1a3cf597f1dfa6, type: 3}
       propertyPath: m_Name
       value: Scrap1 (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4694798884216303381, guid: 2eac9db04fa730541a1a3cf597f1dfa6, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5362826297173915055, guid: 2eac9db04fa730541a1a3cf597f1dfa6, type: 3}
       propertyPath: m_LocalScale.y
@@ -6590,6 +6634,10 @@ PrefabInstance:
     - target: {fileID: 5362826297173915055, guid: 2eac9db04fa730541a1a3cf597f1dfa6, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7447167845737621767, guid: 2eac9db04fa730541a1a3cf597f1dfa6, type: 3}
+      propertyPath: isBuried
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -7745,6 +7793,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Scrap3 (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 3190170294210138082, guid: 4cbefd5605338fb40ad8749d85a05a7f, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7522458404117890288, guid: 4cbefd5605338fb40ad8749d85a05a7f, type: 3}
+      propertyPath: isBuried
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -8053,6 +8109,14 @@ PrefabInstance:
     - target: {fileID: 1001570506404310044, guid: 9f8cf219022582648966d7e0a7fdeaee, type: 3}
       propertyPath: m_Name
       value: Scrap2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1001570506404310044, guid: 9f8cf219022582648966d7e0a7fdeaee, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2056698207862949723, guid: 9f8cf219022582648966d7e0a7fdeaee, type: 3}
+      propertyPath: isBuried
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -12489,6 +12553,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Scrap3 (8)
       objectReference: {fileID: 0}
+    - target: {fileID: 3190170294210138082, guid: 4cbefd5605338fb40ad8749d85a05a7f, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7522458404117890288, guid: 4cbefd5605338fb40ad8749d85a05a7f, type: 3}
+      propertyPath: isBuried
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -12760,6 +12832,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Scrap3 (4)
       objectReference: {fileID: 0}
+    - target: {fileID: 3190170294210138082, guid: 4cbefd5605338fb40ad8749d85a05a7f, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7522458404117890288, guid: 4cbefd5605338fb40ad8749d85a05a7f, type: 3}
+      propertyPath: isBuried
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -12967,6 +13047,14 @@ PrefabInstance:
     - target: {fileID: 1001570506404310044, guid: 9f8cf219022582648966d7e0a7fdeaee, type: 3}
       propertyPath: m_Name
       value: Scrap2 (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1001570506404310044, guid: 9f8cf219022582648966d7e0a7fdeaee, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2056698207862949723, guid: 9f8cf219022582648966d7e0a7fdeaee, type: 3}
+      propertyPath: isBuried
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -15874,6 +15962,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Scrap3 (5)
       objectReference: {fileID: 0}
+    - target: {fileID: 3190170294210138082, guid: 4cbefd5605338fb40ad8749d85a05a7f, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7522458404117890288, guid: 4cbefd5605338fb40ad8749d85a05a7f, type: 3}
+      propertyPath: isBuried
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -16660,6 +16756,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Scrap1 (4)
       objectReference: {fileID: 0}
+    - target: {fileID: 4694798884216303381, guid: 2eac9db04fa730541a1a3cf597f1dfa6, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5362826297173915055, guid: 2eac9db04fa730541a1a3cf597f1dfa6, type: 3}
       propertyPath: m_LocalScale.y
       value: 43.259995
@@ -16707,6 +16807,10 @@ PrefabInstance:
     - target: {fileID: 5362826297173915055, guid: 2eac9db04fa730541a1a3cf597f1dfa6, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7447167845737621767, guid: 2eac9db04fa730541a1a3cf597f1dfa6, type: 3}
+      propertyPath: isBuried
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -18664,6 +18768,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Scrap3 (10)
       objectReference: {fileID: 0}
+    - target: {fileID: 3190170294210138082, guid: 4cbefd5605338fb40ad8749d85a05a7f, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7522458404117890288, guid: 4cbefd5605338fb40ad8749d85a05a7f, type: 3}
+      propertyPath: isBuried
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -19320,6 +19432,14 @@ PrefabInstance:
     - target: {fileID: 3190170294210138082, guid: 4cbefd5605338fb40ad8749d85a05a7f, type: 3}
       propertyPath: m_Name
       value: Scrap3 (6)
+      objectReference: {fileID: 0}
+    - target: {fileID: 3190170294210138082, guid: 4cbefd5605338fb40ad8749d85a05a7f, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7522458404117890288, guid: 4cbefd5605338fb40ad8749d85a05a7f, type: 3}
+      propertyPath: isBuried
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -22581,6 +22701,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Scrap3 (12)
       objectReference: {fileID: 0}
+    - target: {fileID: 3190170294210138082, guid: 4cbefd5605338fb40ad8749d85a05a7f, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7522458404117890288, guid: 4cbefd5605338fb40ad8749d85a05a7f, type: 3}
+      propertyPath: isBuried
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -24013,6 +24141,14 @@ PrefabInstance:
     - target: {fileID: 3190170294210138082, guid: 4cbefd5605338fb40ad8749d85a05a7f, type: 3}
       propertyPath: m_Name
       value: Scrap3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3190170294210138082, guid: 4cbefd5605338fb40ad8749d85a05a7f, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7522458404117890288, guid: 4cbefd5605338fb40ad8749d85a05a7f, type: 3}
+      propertyPath: isBuried
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -26399,6 +26535,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Scrap1 (6)
       objectReference: {fileID: 0}
+    - target: {fileID: 4694798884216303381, guid: 2eac9db04fa730541a1a3cf597f1dfa6, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5362826297173915055, guid: 2eac9db04fa730541a1a3cf597f1dfa6, type: 3}
       propertyPath: m_LocalScale.y
       value: 43.259995
@@ -26446,6 +26586,10 @@ PrefabInstance:
     - target: {fileID: 5362826297173915055, guid: 2eac9db04fa730541a1a3cf597f1dfa6, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7447167845737621767, guid: 2eac9db04fa730541a1a3cf597f1dfa6, type: 3}
+      propertyPath: isBuried
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -27948,6 +28092,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Scrap2 (3)
       objectReference: {fileID: 0}
+    - target: {fileID: 1001570506404310044, guid: 9f8cf219022582648966d7e0a7fdeaee, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2056698207862949723, guid: 9f8cf219022582648966d7e0a7fdeaee, type: 3}
+      propertyPath: isBuried
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -28119,6 +28271,14 @@ PrefabInstance:
     - target: {fileID: 1001570506404310044, guid: 9f8cf219022582648966d7e0a7fdeaee, type: 3}
       propertyPath: m_Name
       value: Scrap2 (5)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1001570506404310044, guid: 9f8cf219022582648966d7e0a7fdeaee, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2056698207862949723, guid: 9f8cf219022582648966d7e0a7fdeaee, type: 3}
+      propertyPath: isBuried
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -30651,6 +30811,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Scrap2 (6)
       objectReference: {fileID: 0}
+    - target: {fileID: 1001570506404310044, guid: 9f8cf219022582648966d7e0a7fdeaee, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2056698207862949723, guid: 9f8cf219022582648966d7e0a7fdeaee, type: 3}
+      propertyPath: isBuried
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -32233,6 +32401,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Scrap1 (11)
       objectReference: {fileID: 0}
+    - target: {fileID: 4694798884216303381, guid: 2eac9db04fa730541a1a3cf597f1dfa6, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5362826297173915055, guid: 2eac9db04fa730541a1a3cf597f1dfa6, type: 3}
       propertyPath: m_LocalScale.y
       value: 43.259995
@@ -32280,6 +32452,10 @@ PrefabInstance:
     - target: {fileID: 5362826297173915055, guid: 2eac9db04fa730541a1a3cf597f1dfa6, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7447167845737621767, guid: 2eac9db04fa730541a1a3cf597f1dfa6, type: 3}
+      propertyPath: isBuried
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -32478,6 +32654,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Scrap1 (12)
       objectReference: {fileID: 0}
+    - target: {fileID: 4694798884216303381, guid: 2eac9db04fa730541a1a3cf597f1dfa6, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5362826297173915055, guid: 2eac9db04fa730541a1a3cf597f1dfa6, type: 3}
       propertyPath: m_LocalScale.y
       value: 43.259995
@@ -32525,6 +32705,10 @@ PrefabInstance:
     - target: {fileID: 5362826297173915055, guid: 2eac9db04fa730541a1a3cf597f1dfa6, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7447167845737621767, guid: 2eac9db04fa730541a1a3cf597f1dfa6, type: 3}
+      propertyPath: isBuried
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -33352,6 +33536,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Scrap2 (4)
       objectReference: {fileID: 0}
+    - target: {fileID: 1001570506404310044, guid: 9f8cf219022582648966d7e0a7fdeaee, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2056698207862949723, guid: 9f8cf219022582648966d7e0a7fdeaee, type: 3}
+      propertyPath: isBuried
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -33373,6 +33565,10 @@ PrefabInstance:
     - target: {fileID: 4694798884216303381, guid: 2eac9db04fa730541a1a3cf597f1dfa6, type: 3}
       propertyPath: m_Name
       value: Scrap1 (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4694798884216303381, guid: 2eac9db04fa730541a1a3cf597f1dfa6, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5362826297173915055, guid: 2eac9db04fa730541a1a3cf597f1dfa6, type: 3}
       propertyPath: m_LocalScale.y
@@ -33421,6 +33617,10 @@ PrefabInstance:
     - target: {fileID: 5362826297173915055, guid: 2eac9db04fa730541a1a3cf597f1dfa6, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7447167845737621767, guid: 2eac9db04fa730541a1a3cf597f1dfa6, type: 3}
+      propertyPath: isBuried
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -34123,6 +34323,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Scrap1
       objectReference: {fileID: 0}
+    - target: {fileID: 4694798884216303381, guid: 2eac9db04fa730541a1a3cf597f1dfa6, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5362826297173915055, guid: 2eac9db04fa730541a1a3cf597f1dfa6, type: 3}
       propertyPath: m_LocalScale.y
       value: 43.259995
@@ -34170,6 +34374,10 @@ PrefabInstance:
     - target: {fileID: 5362826297173915055, guid: 2eac9db04fa730541a1a3cf597f1dfa6, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7447167845737621767, guid: 2eac9db04fa730541a1a3cf597f1dfa6, type: 3}
+      propertyPath: isBuried
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -36081,7 +36289,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1712090374}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: Hills
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -39192,6 +39400,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Scrap1 (5)
       objectReference: {fileID: 0}
+    - target: {fileID: 4694798884216303381, guid: 2eac9db04fa730541a1a3cf597f1dfa6, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5362826297173915055, guid: 2eac9db04fa730541a1a3cf597f1dfa6, type: 3}
       propertyPath: m_LocalScale.y
       value: 43.259995
@@ -39239,6 +39451,10 @@ PrefabInstance:
     - target: {fileID: 5362826297173915055, guid: 2eac9db04fa730541a1a3cf597f1dfa6, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7447167845737621767, guid: 2eac9db04fa730541a1a3cf597f1dfa6, type: 3}
+      propertyPath: isBuried
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -39475,6 +39691,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Scrap1 (3)
       objectReference: {fileID: 0}
+    - target: {fileID: 4694798884216303381, guid: 2eac9db04fa730541a1a3cf597f1dfa6, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5362826297173915055, guid: 2eac9db04fa730541a1a3cf597f1dfa6, type: 3}
       propertyPath: m_LocalScale.y
       value: 43.259995
@@ -39522,6 +39742,10 @@ PrefabInstance:
     - target: {fileID: 5362826297173915055, guid: 2eac9db04fa730541a1a3cf597f1dfa6, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7447167845737621767, guid: 2eac9db04fa730541a1a3cf597f1dfa6, type: 3}
+      propertyPath: isBuried
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -39984,6 +40208,14 @@ PrefabInstance:
     - target: {fileID: 1001570506404310044, guid: 9f8cf219022582648966d7e0a7fdeaee, type: 3}
       propertyPath: m_Name
       value: Scrap2 (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1001570506404310044, guid: 9f8cf219022582648966d7e0a7fdeaee, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2056698207862949723, guid: 9f8cf219022582648966d7e0a7fdeaee, type: 3}
+      propertyPath: isBuried
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -40744,6 +40976,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Scrap3 (7)
       objectReference: {fileID: 0}
+    - target: {fileID: 3190170294210138082, guid: 4cbefd5605338fb40ad8749d85a05a7f, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7522458404117890288, guid: 4cbefd5605338fb40ad8749d85a05a7f, type: 3}
+      propertyPath: isBuried
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -40913,6 +41153,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Scrap2 (7)
       objectReference: {fileID: 0}
+    - target: {fileID: 1001570506404310044, guid: 9f8cf219022582648966d7e0a7fdeaee, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2056698207862949723, guid: 9f8cf219022582648966d7e0a7fdeaee, type: 3}
+      propertyPath: isBuried
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -40982,6 +41230,14 @@ PrefabInstance:
     - target: {fileID: 3190170294210138082, guid: 4cbefd5605338fb40ad8749d85a05a7f, type: 3}
       propertyPath: m_Name
       value: Scrap3 (11)
+      objectReference: {fileID: 0}
+    - target: {fileID: 3190170294210138082, guid: 4cbefd5605338fb40ad8749d85a05a7f, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7522458404117890288, guid: 4cbefd5605338fb40ad8749d85a05a7f, type: 3}
+      propertyPath: isBuried
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -41264,6 +41520,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Scrap1 (8)
       objectReference: {fileID: 0}
+    - target: {fileID: 4694798884216303381, guid: 2eac9db04fa730541a1a3cf597f1dfa6, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5362826297173915055, guid: 2eac9db04fa730541a1a3cf597f1dfa6, type: 3}
       propertyPath: m_LocalScale.y
       value: 43.259995
@@ -41311,6 +41571,10 @@ PrefabInstance:
     - target: {fileID: 5362826297173915055, guid: 2eac9db04fa730541a1a3cf597f1dfa6, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7447167845737621767, guid: 2eac9db04fa730541a1a3cf597f1dfa6, type: 3}
+      propertyPath: isBuried
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -42928,6 +43192,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Scrap3 (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 3190170294210138082, guid: 4cbefd5605338fb40ad8749d85a05a7f, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7522458404117890288, guid: 4cbefd5605338fb40ad8749d85a05a7f, type: 3}
+      propertyPath: isBuried
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -44316,6 +44588,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Scrap1 (10)
       objectReference: {fileID: 0}
+    - target: {fileID: 4694798884216303381, guid: 2eac9db04fa730541a1a3cf597f1dfa6, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5362826297173915055, guid: 2eac9db04fa730541a1a3cf597f1dfa6, type: 3}
       propertyPath: m_LocalScale.y
       value: 43.259995
@@ -44363,6 +44639,10 @@ PrefabInstance:
     - target: {fileID: 5362826297173915055, guid: 2eac9db04fa730541a1a3cf597f1dfa6, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7447167845737621767, guid: 2eac9db04fa730541a1a3cf597f1dfa6, type: 3}
+      propertyPath: isBuried
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -45958,6 +46238,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Scrap3 (9)
       objectReference: {fileID: 0}
+    - target: {fileID: 3190170294210138082, guid: 4cbefd5605338fb40ad8749d85a05a7f, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7522458404117890288, guid: 4cbefd5605338fb40ad8749d85a05a7f, type: 3}
+      propertyPath: isBuried
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -45979,6 +46267,10 @@ PrefabInstance:
     - target: {fileID: 4694798884216303381, guid: 2eac9db04fa730541a1a3cf597f1dfa6, type: 3}
       propertyPath: m_Name
       value: Scrap1 (7)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4694798884216303381, guid: 2eac9db04fa730541a1a3cf597f1dfa6, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5362826297173915055, guid: 2eac9db04fa730541a1a3cf597f1dfa6, type: 3}
       propertyPath: m_LocalScale.y
@@ -46027,6 +46319,10 @@ PrefabInstance:
     - target: {fileID: 5362826297173915055, guid: 2eac9db04fa730541a1a3cf597f1dfa6, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7447167845737621767, guid: 2eac9db04fa730541a1a3cf597f1dfa6, type: 3}
+      propertyPath: isBuried
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -47375,6 +47671,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Scrap1
       objectReference: {fileID: 0}
+    - target: {fileID: 4694798884216303381, guid: 2eac9db04fa730541a1a3cf597f1dfa6, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5362826297173915055, guid: 2eac9db04fa730541a1a3cf597f1dfa6, type: 3}
       propertyPath: m_LocalScale.y
       value: 43.259995
@@ -47422,6 +47722,10 @@ PrefabInstance:
     - target: {fileID: 5362826297173915055, guid: 2eac9db04fa730541a1a3cf597f1dfa6, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7447167845737621767, guid: 2eac9db04fa730541a1a3cf597f1dfa6, type: 3}
+      propertyPath: isBuried
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -47990,6 +48294,7 @@ MonoBehaviour:
   itemAnimator: {fileID: 1614146641090095261}
   isPlaced: 1
   isActivated: 0
+  isBuried: 0
 --- !u!20 &2645330874712710407
 Camera:
   m_ObjectHideFlags: 0
@@ -48640,6 +48945,14 @@ PrefabInstance:
     - target: {fileID: 3190170294210138082, guid: 4cbefd5605338fb40ad8749d85a05a7f, type: 3}
       propertyPath: m_Name
       value: Scrap3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3190170294210138082, guid: 4cbefd5605338fb40ad8749d85a05a7f, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7522458404117890288, guid: 4cbefd5605338fb40ad8749d85a05a7f, type: 3}
+      propertyPath: isBuried
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -49660,6 +49973,14 @@ PrefabInstance:
     - target: {fileID: 1001570506404310044, guid: 9f8cf219022582648966d7e0a7fdeaee, type: 3}
       propertyPath: m_Name
       value: Scrap2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1001570506404310044, guid: 9f8cf219022582648966d7e0a7fdeaee, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2056698207862949723, guid: 9f8cf219022582648966d7e0a7fdeaee, type: 3}
+      propertyPath: isBuried
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
