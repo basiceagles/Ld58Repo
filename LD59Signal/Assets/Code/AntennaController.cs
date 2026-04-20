@@ -28,7 +28,7 @@ public class AntennaController : MonoBehaviour
     private bool skipE;
     private bool signalConfirmed;
     public bool isReceivingSignal;
-    public bool IsLocked => signalConfirmed || isReceivingSignal;
+    public bool IsLocked => !isStartingAntenna && isReceivingSignal;
     public bool IsSignalConfirmed => signalConfirmed;
     private Camera mainCam;
     private float pan;
@@ -292,8 +292,23 @@ public class AntennaController : MonoBehaviour
             TrySignal();
         }
 
-        pan = Mathf.Clamp(pan + Input.GetAxis("Horizontal") * rotSpeed * Time.deltaTime, -rotLimit, rotLimit);
-        tilt = Mathf.Clamp(tilt - Input.GetAxis("Vertical") * rotSpeed * Time.deltaTime, -rotLimit, rotLimit);
+        float horizontal = Input.GetAxis("Horizontal");
+        float vertical = Input.GetAxis("Vertical");
+
+        if (horizontal != 0 || vertical != 0)
+        {
+            if (isSignalEstablished)
+            {
+                if (targetAntenna != null) targetAntenna.SetReceivingSignal(false);
+                targetAntenna = null;
+                targetGoal = null;
+                isSignalEstablished = false;
+                signalConfirmed = false;
+            }
+
+            pan = Mathf.Clamp(pan + horizontal * rotSpeed * Time.deltaTime, -rotLimit, rotLimit);
+            tilt = Mathf.Clamp(tilt - vertical * rotSpeed * Time.deltaTime, -rotLimit, rotLimit);
+        }
 
         if (antennaCamera)
         {
@@ -363,6 +378,15 @@ public class AntennaController : MonoBehaviour
         if (IsLocked)
         {
             return;
+        }
+
+        if (isSignalEstablished)
+        {
+            if (targetAntenna != null) targetAntenna.SetReceivingSignal(false);
+            targetAntenna = null;
+            targetGoal = null;
+            isSignalEstablished = false;
+            signalConfirmed = false;
         }
 
         if (dishPart)

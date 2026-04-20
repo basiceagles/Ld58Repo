@@ -45,7 +45,6 @@ public class GamePhaseManager : MonoBehaviour
             {
                 currentTimer -= Time.deltaTime;
                 
-                // Проверяем цепочку сигнала раз в полсекунды
                 chainCheckTimer -= Time.deltaTime;
                 if (chainCheckTimer <= 0)
                 {
