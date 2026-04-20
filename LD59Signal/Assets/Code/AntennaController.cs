@@ -29,6 +29,7 @@ public class AntennaController : MonoBehaviour
     private bool isReceivingSignal;
     public bool IsLocked => signalConfirmed || isReceivingSignal;
     public bool IsSignalConfirmed => signalConfirmed;
+    public bool IsViewing => isViewing;
     private Camera mainCam;
     private float pan;
     private float tilt;
