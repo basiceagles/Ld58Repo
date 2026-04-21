@@ -38855,8 +38855,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 650, y: -279.93}
-  m_SizeDelta: {x: 471.076, y: 311.3488}
+  m_AnchoredPosition: {x: 532, y: -258}
+  m_SizeDelta: {x: 336.5989, y: 311.3488}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1652148328
 MonoBehaviour:
@@ -38878,7 +38878,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: " W / S \u2014 Amplitude     A / D \u2014 Frequency\n Q / E \u2014 Phase    
+  m_text: "W / S \u2014 Amplitude     A / D \u2014 Frequency\nQ / E \u2014 Phase            
     ESC \u2014 Exit"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 0737cb738bd5109469ba59b4cb74e351, type: 2}
@@ -49174,7 +49174,7 @@ MonoBehaviour:
   _audioFadeTimeSeconds: 4
   _basicWeather:
     environmentFogColor: {r: 0.13333334, g: 0.105882354, b: 0.10980392, a: 0}
-    environmentFogDensity: 0.015
+    environmentFogDensity: 0.087
     mainCameraBackgroundColor: {r: 0.13333334, g: 0.10588236, b: 0.10980393, a: 0}
     environmentAmbientColor: {r: 0.22745098, g: 0.22745098, b: 0.2, a: 0}
     directionalLightIntensity: 0.2
@@ -49412,9 +49412,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b8302cf14c688a14daa7c547c0e785c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  goodPhaseDuration: 30
-  stormDuration: 10
-  breakCheckInterval: 20
+  goodPhaseDuration: 150
+  stormDuration: 40
+  breakCheckInterval: 9
   weatherFader: {fileID: 2016448068}
   currentTimer: 0
   isStormActive: 0
