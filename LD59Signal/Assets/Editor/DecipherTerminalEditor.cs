@@ -38,7 +38,7 @@ public class DecipherTerminalEditor : Editor
     {
         EditorGUILayout.PropertyField(_interactionRadiusProp, new GUIContent("Радиус"));
         EditorGUILayout.PropertyField(_playerTransformProp,   new GUIContent("Transform игрока"));
-        EditorGUILayout.PropertyField(_interactPromptProp,    new GUIContent("Подсказка E"));
+        EditorGUILayout.PropertyField(_interactPromptProp,    new GUIContent("Подсказка I"));
     }
 
     private void DrawScreenSection()

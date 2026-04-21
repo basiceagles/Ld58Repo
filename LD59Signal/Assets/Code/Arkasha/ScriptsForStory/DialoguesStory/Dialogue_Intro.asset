@@ -1,0 +1,49 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ad8ad1aa6568f544aa4f6e7c6c0c8a4, type: 3}
+  m_Name: Dialogue_Intro
+  m_EditorClassIdentifier: 
+  lines:
+  - speakerName: '[Command]'
+    text: A signal has been routed to your station.
+    voiceClip: {fileID: 0}
+  - speakerName: '[Command]'
+    text: "Under normal circumstances, your involvement wouldn't be necessary \u2014
+      however... your primary antenna was damaged in the storm."
+    voiceClip: {fileID: 0}
+  - speakerName: '[Command]'
+    text: You'll need to manually relay the signal to the western tower, "Noktau".
+    voiceClip: {fileID: 0}
+  - speakerName: '[Command]'
+    text: I trust you haven't forgotten your emergency protocol training.
+    voiceClip: {fileID: 0}
+  - speakerName: '[Command]'
+    text: 'Begin routing the signal from the main antenna
+
+      already positioned
+      near the door.'
+    voiceClip: {fileID: 0}
+  - speakerName: '[Command]'
+    text: 'This signal is critical.
+
+      Deliver it. No matter what.'
+    voiceClip: {fileID: 0}
+  - speakerName: '[Command]'
+    text: You and your family will receive paid leave if you pull this off. And if
+      you don't...
+    voiceClip: {fileID: 0}
+  - speakerName: '[Command]'
+    text: I think you already know what happens.
+    voiceClip: {fileID: 0}
+  - speakerName: '[Command]'
+    text: Don't let me down.
+    voiceClip: {fileID: 0}

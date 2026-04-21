@@ -56,12 +56,14 @@ public class GamePhaseManager : MonoBehaviour
             }
 
             stormCount++;
-            isStormActive = true;
-            breaksThisStorm = 0;
-            if (weatherFader != null)
-            {
-                weatherFader.FadeToFoggy();
-            }
+isStormActive = true;
+breaksThisStorm = 0;
+
+
+if (weatherFader != null)
+{
+    weatherFader.FadeToFoggy();
+}
 
             CheckForFinalDestruction();
 
@@ -246,18 +248,20 @@ public class GamePhaseManager : MonoBehaviour
         StartCoroutine(ForceStormRoutine());
     }
 
-    private IEnumerator ForceStormRoutine()
+   private IEnumerator ForceStormRoutine()
+{
+    stormCount++;
+    isStormActive = true;
+    breaksThisStorm = 0;
+
+
+    if (weatherFader != null)
     {
-        stormCount++;
-        isStormActive = true;
-        breaksThisStorm = 0;
-        if (weatherFader != null)
-        {
-            weatherFader.FadeToFoggy();
-        }
-        yield return StartCoroutine(StormRoutine());
-        StartCoroutine(MainGameLoop()); 
+        weatherFader.FadeToFoggy();
     }
+    yield return StartCoroutine(StormRoutine());
+    StartCoroutine(MainGameLoop()); 
+}
 
     [ContextMenu("Debug/Break Random Antenna")]
     public void BreakRandomAntenna()
