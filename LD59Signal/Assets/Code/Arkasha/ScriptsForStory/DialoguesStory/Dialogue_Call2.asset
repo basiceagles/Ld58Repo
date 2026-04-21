@@ -1,0 +1,36 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ad8ad1aa6568f544aa4f6e7c6c0c8a4, type: 3}
+  m_Name: Dialogue_Call2
+  m_EditorClassIdentifier: 
+  lines:
+  - speakerName: '[Unknown frequency]'
+    text: Don't do this. Please.
+    voiceClip: {fileID: 0}
+  - speakerName: '[Unknown frequency]'
+    text: Don't relay that signal.
+    voiceClip: {fileID: 0}
+  - speakerName: '[Unknown frequency]'
+    text: "If you transmit it \u2014 the world will be gone by tomorrow."
+    voiceClip: {fileID: 0}
+  - speakerName: '[Unknown frequency]'
+    text: Ha. Right. You don't believe me...
+    voiceClip: {fileID: 0}
+  - speakerName: '[Unknown frequency]'
+    text: They pay you well, don't they?
+    voiceClip: {fileID: 0}
+  - speakerName: '[Unknown frequency]'
+    text: Listen, I can prove-
+    voiceClip: {fileID: 0}
+  - speakerName: '[Unknown frequency]'
+    text: '[Signal lost]'
+    voiceClip: {fileID: 0}

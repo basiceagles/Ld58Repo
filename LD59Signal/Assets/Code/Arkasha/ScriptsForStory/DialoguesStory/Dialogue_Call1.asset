@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ad8ad1aa6568f544aa4f6e7c6c0c8a4, type: 3}
+  m_Name: Dialogue_Call1
+  m_EditorClassIdentifier: 
+  lines:
+  - speakerName: '[Unknown frequency]'
+    text: "I've printed the decryption keys for you.\nCheck to the right of this
+      terminal \u2014 pick them up with \"E\"."
+    voiceClip: {fileID: 0}
+  - speakerName: '[Unknown frequency]'
+    text: Walk up to your antenna and press "i".
+    voiceClip: {fileID: 0}
+  - speakerName: '[Unknown frequency]'
+    text: Decrypt all 5 segments and you'll see exactly what this signal contains.
+    voiceClip: {fileID: 0}
+  - speakerName: '[Unknown frequency]'
+    text: Each antenna can only decrypt one segment.
+    voiceClip: {fileID: 0}
+  - speakerName: '[Unknown frequency]'
+    text: "Please.\nDo this \u2014 not for me."
+    voiceClip: {fileID: 0}
+  - speakerName: '[Unknown frequency]'
+    text: For your family.
+    voiceClip: {fileID: 0}

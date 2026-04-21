@@ -14,104 +14,124 @@ public class DecipherTerminal : MonoBehaviour
     [Header("Фрагменты")]
     [SerializeField] private DecipherFragmentConfig[] _fragments;
 
-    // Срабатывает когда все фрагменты расшифрованы
     public event Action OnAllFragmentsDeciphered;
 
-    public int FragmentsDeciphered { get; private set; } = 0;
     public int TotalFragments => _fragments != null ? _fragments.Length : 0;
 
+    public int FragmentsDeciphered => PlayerProgressManager.Instance != null
+        ? PlayerProgressManager.Instance.GlobalFragmentsDeciphered
+        : 0;
+
     private bool  _isOpen;
-    private float _sqrInteractionRadius;
+private bool  _skipI;
+private bool  _wasDeciphered; // эта антенна уже была расшифрована
+private float _sqrInteractionRadius;
 
     private void Awake()
-{
-    _sqrInteractionRadius = _interactionRadius * _interactionRadius;
-
-    if (_playerTransform == null)
-        _playerTransform = GameObject.FindWithTag("Player")?.transform;
-
-    if (_decipherScreen == null)
-        _decipherScreen = FindObjectOfType<DecipherScreen>();
-
-    if (_decipherScreen == null)
-        Debug.LogError($"[DecipherTerminal] DecipherScreen не найден!", this);
-
-    if (_playerTransform == null)
-        Debug.LogError($"[DecipherTerminal] Player Transform не найден!", this);
-
-    if (_interactPrompt != null)
-        _interactPrompt.SetActive(false);
-}
-
-   private void Update()
-{
-    if (_isOpen || _playerTransform == null) return;
-
-    bool inRange = IsPlayerInRange();
-    bool allDone = FragmentsDeciphered >= TotalFragments;
-
-    if (_interactPrompt != null)
-        _interactPrompt.SetActive(inRange && !allDone);
-
-    if (inRange && !allDone)
-{
-    if (Input.GetKeyDown(KeyCode.I))
-        TryEnter();
-}
-}
-
-   public void TryEnter()
-{
-    if (_isOpen)
     {
-        Debug.Log("[DecipherTerminal] TryEnter — экран уже открыт");
-        return;
-    }
-    if (_decipherScreen == null)
-    {
-        Debug.LogError("[DecipherTerminal] TryEnter — DecipherScreen не назначен!");
-        return;
-    }
-    if (FragmentsDeciphered >= TotalFragments)
-    {
-        Debug.Log("[DecipherTerminal] TryEnter — все фрагменты уже расшифрованы");
-        return;
+        _sqrInteractionRadius = _interactionRadius * _interactionRadius;
+
+        if (_playerTransform == null)
+            _playerTransform = GameObject.FindWithTag("Player")?.transform;
+
+        if (_decipherScreen == null)
+            _decipherScreen = FindObjectOfType<DecipherScreen>();
+
+        if (_decipherScreen == null)
+            Debug.LogError("[DecipherTerminal] DecipherScreen не найден!", this);
+
+        if (_playerTransform == null)
+            Debug.LogError("[DecipherTerminal] Player Transform не найден!", this);
+
+        if (_interactPrompt != null)
+            _interactPrompt.SetActive(false);
     }
 
-    Debug.Log($"[DecipherTerminal] Открываем экран, фрагмент {FragmentsDeciphered + 1}");
+    private void Update()
+    {
+        if (_isOpen || _playerTransform == null) return;
 
-    _isOpen = true;
+        bool inRange = IsPlayerInRange();
+        bool canOpen = CanOpenDecipher();
 
-    if (_interactPrompt != null)
-        _interactPrompt.SetActive(false);
+        if (_interactPrompt != null)
+            _interactPrompt.SetActive(inRange && canOpen);
 
-    _decipherScreen.Open(this, _fragments[FragmentsDeciphered]);
+        if (_skipI)
+        {
+            if (Input.GetKeyUp(KeyCode.I))
+                _skipI = false;
+            return;
+        }
+
+        if (inRange && canOpen && Input.GetKeyDown(KeyCode.I))
+    TryEnter();
+    }
+
+    // Проверяет условия: бумажка + сигнал подключён + не все расшифрованы
+   private bool CanOpenDecipher()
+{
+    var progress = PlayerProgressManager.Instance;
+    if (progress == null) return false;
+
+    // Единственное условие — бумажка с кодами
+    if (!progress.HasDecipherKey) return false;
+
+    // Эта антенна уже была расшифрована
+    if (_wasDeciphered) return false;
+
+    // Все фрагменты уже расшифрованы глобально
+    if (progress.AllFragmentsDeciphered) return false;
+
+    return true;
 }
 
-    // Вызывается экраном когда игрок нажал выход
+    public void TryEnter()
+    {
+        if (_isOpen) return;
+
+        if (_decipherScreen == null)
+        {
+            Debug.LogError("[DecipherTerminal] DecipherScreen не назначен!");
+            return;
+        }
+
+        var progress = PlayerProgressManager.Instance;
+        if (progress == null) return;
+
+        if (progress.AllFragmentsDeciphered) return;
+
+        int fragmentIndex = progress.GlobalFragmentsDeciphered;
+        if (fragmentIndex >= TotalFragments) return;
+
+        _isOpen = true;
+        _skipI  = true;
+
+        if (_interactPrompt != null)
+            _interactPrompt.SetActive(false);
+
+        _decipherScreen.Open(this, _fragments[fragmentIndex]);
+    }
+
+    // Вызывается экраном когда игрок вышел
     public void NotifyExit()
     {
         _isOpen = false;
     }
 
     // Вызывается экраном после успешной расшифровки фрагмента
-    // Возвращает true если есть ещё фрагменты
-    public bool TryGetNextFragment(out DecipherFragmentConfig nextConfig)
-    {
-        FragmentsDeciphered++;
+   public bool TryGetNextFragment(out DecipherFragmentConfig nextConfig)
+{
+    // Помечаем эту антенну как расшифрованную
+    _wasDeciphered = true;
 
-        if (FragmentsDeciphered < TotalFragments)
-        {
-            nextConfig = _fragments[FragmentsDeciphered];
-            return true;
-        }
+    PlayerProgressManager.Instance?.RegisterFragmentDeciphered();
 
-        nextConfig = default;
-        OnAllFragmentsDeciphered?.Invoke();
-        return false;
-    }
+    nextConfig = default;
+    OnAllFragmentsDeciphered?.Invoke();
+    return false;
+}
 
-    // sqrMagnitude вместо magnitude — не считаем лишний квадратный корень
     private bool IsPlayerInRange()
     {
         return (_playerTransform.position - transform.position).sqrMagnitude
