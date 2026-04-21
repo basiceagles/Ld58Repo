@@ -75,7 +75,7 @@ public class DecipherKeyItem : MonoBehaviour
         PlayerProgressManager.Instance.ObtainDecipherKey();
 
         if (NotificationUI.Instance != null)
-            NotificationUI.Instance.Show("Signal decryption available");
+            NotificationUI.Instance.Show("Signal decryption available — press I near an antenna");
 
         Destroy(gameObject);
     }

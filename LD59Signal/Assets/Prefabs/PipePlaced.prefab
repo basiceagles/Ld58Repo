@@ -471,13 +471,13 @@ MonoBehaviour:
   _interactPrompt: {fileID: 0}
   _decipherScreen: {fileID: 0}
   _fragments:
-  - targetAmplitude: 1.43
-    targetFrequency: 7.3
+  - targetAmplitude: 0.61
+    targetFrequency: 3.3
     targetPhase: 0
     ampAdjustSpeed: 0.5
     freqAdjustSpeed: 0.5
     phaseAdjustSpeed: 0.5
-    hasPhaseControl: 0
+    hasPhaseControl: 1
     hasDrift: 0
     driftSpeed: 0.2
     noiseStrength: 0
@@ -485,59 +485,59 @@ MonoBehaviour:
     hasInversion: 0
     inversionInterval: 5
     revealedText: 
-  - targetAmplitude: 0.49
-    targetFrequency: 11.9
+  - targetAmplitude: 0.27
+    targetFrequency: 6.9
     targetPhase: 0
     ampAdjustSpeed: 0.5
     freqAdjustSpeed: 0.5
     phaseAdjustSpeed: 0.5
-    hasPhaseControl: 0
+    hasPhaseControl: 1
     hasDrift: 0
     driftSpeed: 0.2
-    noiseStrength: 0
-    noiseInterval: 2
+    noiseStrength: 0.119
+    noiseInterval: 0.32
     hasInversion: 0
     inversionInterval: 5
     revealedText: 
-  - targetAmplitude: 1
-    targetFrequency: 3
-    targetPhase: 0
+  - targetAmplitude: 0.59
+    targetFrequency: 8.1
+    targetPhase: 0.28
     ampAdjustSpeed: 0.5
-    freqAdjustSpeed: 1
-    phaseAdjustSpeed: 1
-    hasPhaseControl: 0
+    freqAdjustSpeed: 0.5
+    phaseAdjustSpeed: 0.5
+    hasPhaseControl: 1
     hasDrift: 0
     driftSpeed: 0.2
-    noiseStrength: 0
-    noiseInterval: 2
+    noiseStrength: 0.209
+    noiseInterval: 0.24
     hasInversion: 0
     inversionInterval: 5
     revealedText: 
-  - targetAmplitude: 1
-    targetFrequency: 3
-    targetPhase: 0
+  - targetAmplitude: 0.72
+    targetFrequency: 4.1
+    targetPhase: 0.7
     ampAdjustSpeed: 0.5
-    freqAdjustSpeed: 1
-    phaseAdjustSpeed: 1
-    hasPhaseControl: 0
+    freqAdjustSpeed: 0.5
+    phaseAdjustSpeed: 0.5
+    hasPhaseControl: 1
     hasDrift: 0
     driftSpeed: 0.2
-    noiseStrength: 0
-    noiseInterval: 2
+    noiseStrength: 0.317
+    noiseInterval: 0.21
     hasInversion: 0
     inversionInterval: 5
     revealedText: 
-  - targetAmplitude: 1
-    targetFrequency: 3
+  - targetAmplitude: 1.09
+    targetFrequency: 8.2
     targetPhase: 0
     ampAdjustSpeed: 0.5
-    freqAdjustSpeed: 1
-    phaseAdjustSpeed: 1
-    hasPhaseControl: 0
+    freqAdjustSpeed: 0.5
+    phaseAdjustSpeed: 0.5
+    hasPhaseControl: 1
     hasDrift: 0
     driftSpeed: 0.2
-    noiseStrength: 0
-    noiseInterval: 2
+    noiseStrength: 0.496
+    noiseInterval: 0.21
     hasInversion: 0
     inversionInterval: 5
     revealedText: 
