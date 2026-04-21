@@ -49392,7 +49392,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   goodPhaseDuration: 210
-  stormDuration: 90
+  stormDuration: 61
   breakCheckInterval: 20
   weatherFader: {fileID: 2016448068}
   currentTimer: 0

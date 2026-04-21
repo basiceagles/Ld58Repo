@@ -19,15 +19,17 @@ MonoBehaviour:
     m_Items: []
   m_TableData:
   - m_Id: 37159952384
-    m_Localized: Well, you've transfered the signal, thanks!
+    m_Localized: You altered the signal. A fragile balance was preserved. But for
+      how long?
     m_Metadata:
       m_Items: []
   - m_Id: 102238773248
-    m_Localized: ...
+    m_Localized: Another signal will come. Another order. They will find out what
+      you did. You'll be replaced, and nothing will change.
     m_Metadata:
       m_Items: []
   - m_Id: 4224312664064
-    m_Localized: .....
+    m_Localized: "But today \u2014 the world saw a new dawn. Because of you."
     m_Metadata:
       m_Items: []
   references:
