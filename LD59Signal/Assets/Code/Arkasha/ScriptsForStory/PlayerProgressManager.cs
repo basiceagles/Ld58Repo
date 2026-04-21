@@ -37,7 +37,7 @@ public class PlayerProgressManager : MonoBehaviour
         }
 
         Instance = this;
-        DontDestroyOnLoad(gameObject);
+        
     }
 
     // Вызывается когда игрок подобрал бумажку с кодами

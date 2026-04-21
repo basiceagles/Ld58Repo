@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9ad8ad1aa6568f544aa4f6e7c6c0c8a4, type: 3}
+  m_Name: BAD ENDING
+  m_EditorClassIdentifier: 
+  lines:
+  - speakerName: '[Command]'
+    text: ...
+    voiceClip: {fileID: 0}
+  - speakerName: '[Command]'
+    text: Good service, wasn't it.
+    voiceClip: {fileID: 0}
+  - speakerName: '[Command]'
+    text: You've earned your leave, operator.
+    voiceClip: {fileID: 0}
+  - speakerName: '[Command]'
+    text: '[Signal lost]'
+    voiceClip: {fileID: 0}
