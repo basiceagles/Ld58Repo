@@ -43383,7 +43383,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02f46dddad895ec4186435fe2be78e1d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _delayBeforeStart: 5
+  _delayBeforeStart: 20
   _delayFallSound: 1
   _delayWaveSound: 0
   _explosionPoint: {fileID: 752376441}
