@@ -209,7 +209,7 @@ Animator:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4296858000316578386}
-  m_Enabled: 1
+  m_Enabled: 0
   m_Avatar: {fileID: 0}
   m_Controller: {fileID: 9100000, guid: 14ca4b6388ee9f4409f869a015ea9da2, type: 2}
   m_CullingMode: 0
@@ -269,6 +269,7 @@ MonoBehaviour:
   itemAnimator: {fileID: 1614146641104480189}
   isPlaced: 0
   isActivated: 0
+  isBuried: 0
 --- !u!114 &3474036599044302574
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -298,7 +299,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 512
   smokeEffect: {fileID: 0}
-  ashPrefab: {fileID: 3798587769616223982, guid: f11aaf07166f172488c1da7a0677c894, type: 3}
+  ashPrefab: {fileID: 4443394594723978236, guid: 8288a46b67f371144b4ee791ec7ffa0d, type: 3}
   brokenOutlineColor: {r: 1, g: 0, b: 0, a: 1}
   isStartingAntenna: 0
   isReceivingSignal: 0
