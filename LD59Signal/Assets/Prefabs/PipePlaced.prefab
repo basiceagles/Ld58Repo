@@ -290,7 +290,7 @@ MonoBehaviour:
   monitorPart: {fileID: 291666350269079245}
   antennaCamera: {fileID: 2645330874759074343}
   rotSpeed: 30
-  rotLimit: 45
+  rotLimit: 70
   dishPart: {fileID: 5861630629121822310}
   linePoint: {fileID: 2966523201110100916}
   lineTarget: {fileID: 2453187371065127182}
@@ -714,8 +714,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.06321171, y: 0.05078399, z: 0.06501198}
-  m_Center: {x: 0.0070516914, y: 0.006500423, z: -0.016688347}
+  m_Size: {x: 0.14955589, y: 0.15402007, z: 0.06501198}
+  m_Center: {x: 0.004101172, y: 0.0044522285, z: -0.016688347}
 --- !u!1001 &7720583582663453703
 PrefabInstance:
   m_ObjectHideFlags: 0
